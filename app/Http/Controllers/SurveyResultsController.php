@@ -11,9 +11,31 @@ class SurveyResultsController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $breadcrumbs = [
+            ['label' => 'Dashboard', 'url' => route('dashboard'), 'active' => false],
+            ['label' => 'Survey Results', 'url' => route('survey-results.index'), 'active' => true],
+        ];
+
+        $perPage = $request->get('per_page', 10);
+        $search = $request->get('search');
+        $status = $request->get('status');
+        $publishSurveys = PublishedSurvey::query();
+
+        if ($search) {
+            // Filter permissions by the search term in the 'name' column
+            $publishSurveys->where('title', 'like', '%' . $search . '%');
+        }
+
+        // Apply status filter if it's not "Status" (default option)
+        if ($status && $status !== 'Status') {
+            $publishSurveys->where('status', $status);
+        }
+
+        $publishSurveys = $publishSurveys->paginate($perPage)->appends(['search' => $search, 'status' => $status, 'per_page' => $perPage]);                
+
+        return view('auth.survey-results.index', compact('publishSurveys', 'breadcrumbs', 'perPage', 'search', 'status'));
     }
 
     /**
