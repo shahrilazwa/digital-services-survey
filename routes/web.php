@@ -24,6 +24,7 @@ Route::group(['middleware' => ['role:admin|super-admin|Survey Author']], functio
     require __DIR__.'/organization_routes.php';
     require __DIR__.'/agency_routes.php';
     require __DIR__.'/publish_survey_routes.php';
+    require __DIR__.'/survey_results_routes.php';
 
     Route::resource('digital-platforms', DigitalPlatformController::class);
     Route::get('digital-platforms/{platformId}/delete', [DigitalPlatformController::class, 'destroy']);
