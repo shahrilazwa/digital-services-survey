@@ -97,7 +97,7 @@ class SurveyResultsController extends Controller
     {
         $breadcrumbs = [
             ['label' => 'Home', 'url' => route('dashboard'), 'active' => false],
-            ['label' => 'Publish Surveys', 'url' => route('publish-surveys.index'), 'active' => false],
+            ['label' => 'Publish Surveys', 'url' => route('survey-results.index'), 'active' => false],
             ['label' => 'Survey Results', 'url' => route('survey-results.view', $id), 'active' => true],
         ];
     

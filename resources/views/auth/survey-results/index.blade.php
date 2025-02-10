@@ -5,7 +5,7 @@
 @endsection
 
 @section('subcontent')
-    <h2 class="intro-y mt-10 text-lg font-medium">Publish Survey List</h2>
+    <h2 class="intro-y mt-10 text-lg font-medium">Survey Results List</h2>
     <div class="intro-y col-span-12 mt-2 flex flex-wrap items-center sm:flex-nowrap">
         <div class="mx-auto hidden text-slate-500 md:block">
             Showing {{ $publishSurveys->firstItem() }} to {{ $publishSurveys->lastItem() }} of {{ $publishSurveys->total() }} published surveys                
