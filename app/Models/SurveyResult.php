@@ -20,4 +20,11 @@ class SurveyResult extends Model
     {
         return $this->hasMany(SurveyResultDetail::class);
     }
+
+    public static function countCompletedSurveys($publishedSurveyId)
+    {
+        return self::where('published_survey_id', $publishedSurveyId)
+            ->whereNotNull('submitted_at') // Only count completed surveys
+            ->count();
+    }    
 }

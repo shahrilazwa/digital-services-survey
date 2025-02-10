@@ -49,6 +49,9 @@
                     <x-base.table.th class="whitespace-nowrap border-b-0">
                         STATUS
                     </x-base.table.th>
+                    <x-base.table.th class="whitespace-nowrap border-b-0">
+                        COMPLETED
+                    </x-base.table.th>                    
                     <x-base.table.th class="whitespace-nowrap border-b-0 text-center">
                         ACTIONS
                     </x-base.table.th>                                                            
@@ -73,24 +76,27 @@
                             </div>
                         </x-base.table.td>
                         <x-base.table.td class="box w-10 rounded-l-none rounded-r-none border-x-0 shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600">
-                            <div @class([
-                                'flex items-center whitespace-nowrap',
-                                'text-success' => $survey->status === 'Active',
-                                'text-danger' => $survey->status === 'Closed',
+                            <span @class([
+                                    'mr-1 rounded-full px-2 py-1 text-white text-xs',
+                                    'bg-success' => $survey->status === 'Published',
+                                    'bg-danger' => $survey->status === 'Closed',
                             ])>
                                 {{ $survey->status ?? 'N/A' }}
                             </div>
                         </x-base.table.td>
+                        <x-base.table.td class="box w-5 rounded-l-none rounded-r-none border-x-0 shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600">
+                            {{ $survey->completed_surveys }}
+                        </x-base.table.td>                        
                         <x-base.table.td @class([
                             'box w-10 rounded-l-none rounded-r-none border-x-0 shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600',
                             'before:absolute before:inset-y-0 before:left-0 before:my-auto before:block before:h-8 before:w-px before:bg-slate-200 before:dark:bg-darkmode-400',
                         ])>
                             <div class="flex items-center justify-center">
                                 @can('update users')
-                                    <a class="mr-3 flex items-center text-primary" 
+                                    <a class="mr-3 flex items-center text-slate-600 dark:text-slate-500" 
                                         href="{{ route('survey-results.view', $survey->id) }}">
                                         <x-base.lucide class="mr-1 h-4 w-4" icon="table" />
-                                        Table View
+                                        View Result
                                     </a>
                                 @endcan                             
                             </div>

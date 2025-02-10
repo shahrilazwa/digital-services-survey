@@ -33,7 +33,12 @@ class SurveyResultsController extends Controller
             $publishSurveys->where('status', $status);
         }
 
-        $publishSurveys = $publishSurveys->paginate($perPage)->appends(['search' => $search, 'status' => $status, 'per_page' => $perPage]);                
+        $publishSurveys = $publishSurveys->paginate($perPage)->appends(['search' => $search, 'status' => $status, 'per_page' => $perPage]);
+        
+        // Attach completed survey count to each published survey
+        foreach ($publishSurveys as $survey) {
+            $survey->completed_surveys = SurveyResult::countCompletedSurveys($survey->id);
+        }        
 
         return view('auth.survey-results.index', compact('publishSurveys', 'breadcrumbs', 'perPage', 'search', 'status'));
     }
