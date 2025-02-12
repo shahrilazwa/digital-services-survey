@@ -1,92 +1,61 @@
 # Survey Management System
 
-## 📌 Project Overview
-This project is a **Survey Management System** built with **Laravel** and **SurveyJS**. It enables users to create, publish, and analyze surveys efficiently. The system supports dynamic schema design, team collaboration, and result visualization with **SurveyJS Table View** and **Tabulator.js**.
+## Overview
+This project is a **Survey Management System** built using Laravel. It allows users to create, manage, and analyze survey schemas and responses efficiently. The system supports multiple user roles and permissions, ensuring secure access control.
 
-## 🎯 Key Features
-- **Survey Creation & Schema Management**: Design surveys with customizable templates and schema definitions.
-- **Publishing & Execution**: Publish surveys and track execution progress.
-- **Survey Results & Analytics**: View responses in a tabular format with export options (CSV & Excel).
-- **User Roles & Permissions**: Role-based access control for creating, editing, and managing surveys.
-- **Survey Lifecycle Management**: Manage surveys from draft to archive.
-- **Dynamic Data Visualization**: Display survey results using **Tabulator.js** with pagination and export features.
+## Features
+- **Survey Schema Management**: Create, update, and manage survey schemas.
+- **Survey Responses**: Collect and analyze survey responses.
+- **Role-Based Access Control (RBAC)**: Uses **Spatie Laravel Permission** to manage roles and permissions.
+- **User Authentication & Security**: Implemented using **Laravel Fortify** for secure login, registration, and authentication.
+- **SurveyJS Integration**: Provides a seamless experience for designing and displaying surveys.
+- **Export Features**: Supports CSV and Excel export for survey results.
+- **Pagination & Search**: Easy navigation through survey lists.
+- **Dynamic UI**: Interactive UI components powered by TailwindCSS and Vue.js.
 
-## 🏗️ Tech Stack
-- **Backend**: Laravel 10 (PHP Framework)
-- **Frontend**: Vue.js, TailwindCSS
-- **Database**: MySQL
-- **Survey Engine**: SurveyJS
-- **Data Table**: Tabulator.js
-- **Authentication**: Laravel Breeze (JWT-based authentication)
+## Technologies Used
+- **Laravel** - PHP Framework
+- **Spatie Laravel Permission** - Role and Permission Management
+- **Laravel Fortify** - Authentication and Security
+- **SurveyJS** - Survey Builder and Viewer
+- **Vue.js** - Frontend Interactivity
+- **TailwindCSS** - UI Styling
+- **MySQL** - Database Management
 
-## 📂 Project Structure
-```
-├── app/                 # Laravel Application Code
-│   ├── Models/          # Eloquent Models
-│   ├── Controllers/     # Application Controllers
-│   ├── Http/           
-│   ├── Policies/        # Authorization Policies
-├── resources/
-│   ├── views/           # Blade Templates (Frontend)
-│   ├── js/              # Vue Components
-│   ├── css/             # Styling (TailwindCSS)
-├── database/            # Migrations & Seeders
-├── routes/              # API & Web Routes
-├── public/              # Public Assets
-├── .env                 # Environment Configuration
-└── README.md            # Project Documentation
-```
+## Installation
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/your-repo/survey-management.git
+   cd survey-management
+   ```
+2. Install dependencies:
+   ```sh
+   composer install
+   npm install
+   ```
+3. Copy the environment file and set up the database:
+   ```sh
+   cp .env.example .env
+   php artisan key:generate
+   ```
+4. Configure `.env` file with database and mail settings.
+5. Run migrations and seeders:
+   ```sh
+   php artisan migrate --seed
+   ```
+6. Start the development server:
+   ```sh
+   php artisan serve
+   ```
 
-## 🚀 Installation Guide
+## Usage
+- Log in as an administrator to manage surveys.
+- Create, edit, and publish survey schemas.
+- Assign roles and permissions using Spatie.
+- Analyze survey responses and export reports.
 
-### 1️⃣ Clone the Repository
-```sh
-git clone https://github.com/your-repo/survey-management-system.git
-cd survey-management-system
-```
+## Contribution
+Feel free to submit issues and pull requests to enhance the system.
 
-### 2️⃣ Install Dependencies
-```sh
-composer install
-npm install
-```
-
-### 3️⃣ Setup Environment
-```sh
-cp .env.example .env
-php artisan key:generate
-```
-Configure **database credentials** in `.env` file.
-
-### 4️⃣ Run Migrations & Seed Database
-```sh
-php artisan migrate --seed
-```
-
-### 5️⃣ Start Development Server
-```sh
-php artisan serve
-npm run dev
-```
-
-## 🔑 Authentication
-- **Login**: `/login`
-- **Register**: `/register`
-- **Survey Creator**: Requires authentication to access survey creation features.
-
-## 📊 Managing Surveys
-- Create new surveys in the **Survey Schema Designer**.
-- Assign roles (Admin, Creator, Reviewer) for collaboration.
-- Publish surveys and collect responses.
-- View survey results in a **Tabulator.js-powered** table.
-
-## 📜 License
-This project is licensed under the **MIT License**.
-
-## 🤝 Contribution Guide
-Contributions are welcome! Follow these steps:
-1. Fork the repository
-2. Create a new branch: `git checkout -b feature-name`
-3. Commit changes: `git commit -m "Add new feature"`
-4. Push to the branch: `git push origin feature-name`
-5. Open a Pull Request
+## License
+This project is licensed under the MIT License.
