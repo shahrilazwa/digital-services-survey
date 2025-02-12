@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->json('schema_json');
-            $table->enum('current_step', ['Schema Details', 'Schema Design','Schema Team','Schema Preview'])->default('Schema Details'); // Default to the first step
+            $table->enum('current_step', ['Schema Details', 'Schema Design','Schema Team','Schema Preview','Schema Manage'])->default('Schema Details');
             $table->json('completed_steps')->nullable();
             $table->enum('status', ['Draft', 'Available','In-Use','Archived'])->default('Draft');
             $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();

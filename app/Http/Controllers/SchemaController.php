@@ -458,7 +458,7 @@ class SchemaController extends Controller
     public function updateStep(Request $request, SurveySchema $schema)
     {
         $request->validate([
-            'current_step' => ['required', 'in:Schema Details,Schema Design,Schema Team,Schema Preview'],
+            'current_step' => ['required', 'in:Schema Details,Schema Design,Schema Team,Schema Preview,Schema Manage'],
         ]);
     
         $completedSteps = $schema->getCompletedSteps();
@@ -477,5 +477,42 @@ class SchemaController extends Controller
             'message' => 'Step updated successfully!',
             'completed_steps' => $completedSteps,
         ]);
-    }  
+    }
+
+    public function manageSchema($schemaId)
+    {
+        $breadcrumbs = [
+            ['label' => 'Dashboard', 'url' => route('dashboard'), 'active' => false],
+            ['label' => 'Schema', 'url' => route('schemas.index'), 'active' => false],
+            ['label' => 'Preview Schema', 'url' => route('schemas.create'), 'active' => true],
+        ];
+
+        $schema = SurveySchema::findOrFail($schemaId);
+        $statusOptions = SurveySchema::STATUS;
+    
+        return view('auth.schemas.manage', compact('schema', 'breadcrumbs', 'statusOptions'));
+    }
+    
+    public function updateStatus(Request $request, $schemaId)
+    {
+        $schema = SurveySchema::findOrFail($schemaId);
+        $request->validate([
+            'status' => 'required|string|in:' . implode(',', array_keys(SurveySchema::STATUS)),
+        ]);
+    
+        $schema->status = $request->status;
+        $completedSteps = $schema->getCompletedSteps();
+
+        if (!in_array('Schema Manage', $completedSteps)) {
+            $completedSteps[] = 'Schema Manage';
+        }
+
+        $schema->update([
+            'status' => $request->status,
+            'completed_steps' => $completedSteps, 
+            'current_step' => 'Schema Manage',
+        ]);
+    
+        return redirect()->route('schemas.index')->with('success', 'Schema status updated successfully.');
+    }    
 }

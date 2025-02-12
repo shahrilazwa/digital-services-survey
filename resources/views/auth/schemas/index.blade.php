@@ -75,11 +75,11 @@
                             </x-base.table.td>
                             <x-base.table.td class="box w-10 rounded-l-none rounded-r-none border-x-0 shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600">
                                 <span @class([
-                                    'mr-1 rounded-full px-2 py-1 text-white text-xs',
+                                    'mr-1 rounded-full px-2 py-1 text-white text-xs whitespace-nowrap',
                                     'bg-warning' => $schema->status === 'Draft',
                                     'bg-success' => $schema->status === 'Available',
                                     'bg-danger'  => $schema->status === 'In-Use',
-                                    'bg-gray-500' => $schema->status === 'Closed',
+                                    'bg-gray-500' => $schema->status === 'Archived',
                                 ])>
                                     {{ $schema->status ?? 'N/A' }}
                                 </span>
