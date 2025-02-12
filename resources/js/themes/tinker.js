@@ -1,3 +1,5 @@
+const sanitizeHtml = require("sanitize-html");
+
 (function () {
     "use strict";
 
@@ -36,11 +38,9 @@
     const initTooltips = (function tooltips() {
         $(".side-menu").each(function () {
             if (this._tippy == undefined) {
-                const content = $(this)
-                    .find(".side-menu__title")
-                    .html()
-                    .replace(/<[^>]*>?/gm, "")
-                    .trim();
+                const content = sanitizeHtml(
+                    $(this).find(".side-menu__title").html().trim()
+                );
                 tippy(this, {
                     content: content,
                     arrow: roundArrow,
