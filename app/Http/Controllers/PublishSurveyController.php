@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Log;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Service;
@@ -86,27 +87,32 @@ class PublishSurveyController extends Controller
         ], 201);  
     }
 
-    public function show(PublishedSurvey $publishedSurvey)
+    public function show(PublishedSurvey $publish_survey)
     {
+        $publishedSurvey = $publish_survey;
+        Log::info('Fetching survey details:', ['id' => $publishedSurvey->id]);
+
         $publishedSurvey->load([   
             'schema',            // Load the associated survey schema
             'team.users',        // Load team and team members
             'digitalPlatform',   // Load digital platform
             'service'            // Load digital service
         ]);
+
+        Log::info('Survey Details Loaded:', $publishedSurvey->toArray());
     
         return response()->json([
             'id' => $publishedSurvey->id,
             'title' => $publishedSurvey->title,
-            'survey_link' => $publishedSurvey->survey_link,
-            'status' => $publishedSurvey->status,
-            'start_date' => $publishedSurvey->start_date,
-            'end_date' => $publishedSurvey->end_date,
-            'survey_schema' => $publishedSurvey->schema->title ?? 'N/A',
+            'survey_link' => $publishedSurvey->survey_link ?? 'N/A',
+            'status' => $publishedSurvey->status ?? 'N/A',
+            'start_date' => optional($publishedSurvey->start_date)->format('Y-m-d'),
+            'end_date' => optional($publishedSurvey->end_date)->format('Y-m-d'),
+            'survey_schema' => optional($publishedSurvey->schema)->title ?? 'N/A',
             'team_name' => $publishedSurvey->team->name ?? 'N/A',
             'team_members' => $publishedSurvey->team->users->pluck('name')->toArray() ?? [],
-            'digital_platform' => $publishedSurvey->digitalPlatform->platform_name ?? 'N/A',
-            'service' => $publishedSurvey->service->service_name ?? 'N/A'
+            'digital_platform' => optional($publishedSurvey->digitalPlatform)->platform_name ?? 'N/A',
+            'service' => optional($publishedSurvey->service)->service_name ?? 'N/A'
         ]);
     }    
 

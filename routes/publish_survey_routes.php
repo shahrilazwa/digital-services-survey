@@ -15,7 +15,7 @@ Route::post('publish-surveys/{publish_survey}/select-team/add', [PublishSurveyCo
 Route::delete('publish-surveys/{publish_survey}/select-team/remove', [PublishSurveyController::class, 'removeTeamMember'])->name('publish-surveys.removeTeamMember');
 Route::get('publish-surveys/{publish_survey}/publish', [PublishSurveyController::class, 'publish'])->name('publish-surveys.publish');
 Route::put('publish-surveys/{publish_survey}/publish', [PublishSurveyController::class, 'storePublishSurvey'])->name('publish-surveys.storePublishSurvey');
-Route::get('publish-surveys/{publishedSurvey}', [PublishSurveyController::class, 'show'])->name('publish-surveys.show');
+// Route::get('publish-surveys/{publishedSurvey}', [PublishSurveyController::class, 'show'])->name('publish-surveys.show');
 
 
 
