@@ -63,7 +63,7 @@
                         <x-base.table.td class="box w-5 rounded-l-none rounded-r-none border-x-0 shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600">
                             {{ $survey->id }}
                         </x-base.table.td>
-                        <x-base.table.td class="box w-20 rounded-l-none rounded-r-none border-x-0 shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600">
+                        <x-base.table.td class="box w-30 rounded-l-none rounded-r-none border-x-0 shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600">
                             <div class="flex items-center">
                                 <div class="">
                                     <a class=" font-medium" href="">
@@ -76,13 +76,15 @@
                             </div>
                         </x-base.table.td>
                         <x-base.table.td class="box w-5 rounded-l-none rounded-r-none border-x-0 shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600">
-                            <div @class([
-                                'flex items-center whitespace-nowrap',
-                                'text-success' => $survey->status === 'Active',
-                                'text-danger' => $survey->status === 'Closed',
+                            <span @class([
+                                'mr-1 rounded-full px-2 py-1 text-white text-xs whitespace-nowrap',
+                                'bg-warning' => $survey->status === 'Draft',
+                                'bg-success' => $survey->status === 'Published',
+                                'bg-danger'  => $survey->status === 'Closed',
+                                'bg-gray-500' => $survey->status === 'Archived',
                             ])>
                                 {{ $survey->status ?? 'N/A' }}
-                            </div>
+                            </span>                            
                         </x-base.table.td>
                         <x-base.table.td @class([
                             'box w-10 rounded-l-none rounded-r-none border-x-0 shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600',
@@ -90,18 +92,20 @@
                         ])>
                             <div class="flex items-center justify-center">
                                 @can('delete users')
-                                    <a class="mr-3 flex items-center text-primary view-survey"
+                                    <a class="mr-3 flex items-center text-success view-survey"
                                         data-tw-toggle="modal" 
                                         data-tw-target="#slide-over-details"
                                         data-survey-id="{{ $survey->id }}"
                                         href="#"
                                     >
-                                        <x-base.lucide class="mr-1 h-4 w-4" icon="eye" />
-                                        View
+                                        <x-base.lucide class="mr-1 h-4 w-4" icon="book-open-text" />
+                                        Details
                                     </a>   
                                 @endcan                                
                                 @can('update users')
-                                    <a class="mr-3 flex items-center" href="{{ route('publish-surveys.edit', $survey->id) }}">
+                                    <a class="mr-3 flex items-center text-warning" 
+                                        href="{{ route('publish-surveys.edit', $survey->id) }}"
+                                    >
                                         <x-base.lucide class="mr-1 h-4 w-4" icon="CheckSquare" />
                                         Edit
                                     </a>                                        

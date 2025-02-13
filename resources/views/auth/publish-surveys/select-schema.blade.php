@@ -71,6 +71,12 @@
             dismissible
         >
             <span>
+                <x-base.lucide
+                    class="mr-3 h-6 w-6"
+                    icon="Lightbulb"
+                />
+            </span>
+            <span>
                 Enter the schema title or a keyword in the search bar below and press 'Enter' to 
                 find matching schemas. Select your desired schema by clicking its checkbox, then 
                 press 'Next' to proceed.
@@ -108,152 +114,194 @@
         </div>
     </div>
     
-    <!-- BEGIN: Survey Schema List -->
-    <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-        <form>
-            @csrf
-            <input type="hidden" name="survey-id" value="{{ $publish_survey->id }}">
-            <x-base.table class="-mt-2 border-separate border-spacing-y-[10px]">
-                <x-base.table.thead>
-                    <x-base.table.tr>
-                        <x-base.table.th class="whitespace-nowrap border-b-0">
-                            
-                        </x-base.table.th>                       
-                        <x-base.table.th class="whitespace-nowrap border-b-0">
-                            TITLE
-                        </x-base.table.th>                      
-                        <x-base.table.th class="whitespace-nowrap border-b-0 text-center">
-                            ACTIONS
-                        </x-base.table.th>                                                            
-                    </x-base.table.tr>
-                </x-base.table.thead>
-                <x-base.table.tbody>
-                    @foreach ($schemas as $schema)
-                        <x-base.table.tr class="intro-x">
-                            <x-base.table.td
-                                class="box w-10 whitespace-nowrap rounded-l-none rounded-r-none border-x-0 shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600"
-                                data-schema-id="{{ $schema->id }}"
-                                data-schema-title="{{ $schema->title }}"
-                            >
-                                <x-base.form-check.input 
-                                    type="checkbox"
-                                    :checked="$schema->id == $publish_survey->schema_id"
-                                />
-                            </x-base.table.td>
-                            <x-base.table.td class="box rounded-l-none rounded-r-none border-x-0 shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600">
-                                <div class="flex items-center">
-                                    <a class="whitespace-nowrap font-medium" href="">
-                                        {{ $schema->title ?? 'N/A' }}
-                                    </a>
-                                </div>
-                            </x-base.table.td>
-                            <x-base.table.td @class([
-                                'box w-56 rounded-l-none rounded-r-none border-x-0 shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600',
-                                'before:absolute before:inset-y-0 before:left-0 before:my-auto before:block before:h-8 before:w-px before:bg-slate-200 before:dark:bg-darkmode-400',
-                            ])>
-                                <div class="flex items-center justify-center">
-                                    @can('delete users')
-                                        <a class="mr-3 flex items-center text-primary"
-                                            data-tw-toggle="modal" 
-                                            data-tw-target="#modal-survey-preview"
-                                            data-survey-id="{{ $schema->id }}"
-                                            href="#"
-                                        >
-                                            <x-base.lucide class="mr-1 h-4 w-4" icon="eye" />
-                                            View
-                                        </a>   
-                                    @endcan                                
-                                </div>                        
-                            </x-base.table.td>
+    @if ($schemas->isNotEmpty())
+        <!-- BEGIN: Survey Schema List -->
+        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
+            <form>
+                @csrf
+                <input type="hidden" name="survey-id" value="{{ $publish_survey->id }}">
+                <x-base.table class="-mt-2 border-separate border-spacing-y-[10px]">
+                    <x-base.table.thead>
+                        <x-base.table.tr>
+                            <x-base.table.th class="whitespace-nowrap border-b-0">
+                                
+                            </x-base.table.th>                       
+                            <x-base.table.th class="whitespace-nowrap border-b-0">
+                                TITLE
+                            </x-base.table.th>                      
+                            <x-base.table.th class="whitespace-nowrap border-b-0 text-center">
+                                ACTIONS
+                            </x-base.table.th>                                                            
                         </x-base.table.tr>
-                    @endforeach
+                    </x-base.table.thead>
+                    <x-base.table.tbody>
+                        @foreach ($schemas as $schema)
+                            @if ($schema->status === 'Available')
+                                <x-base.table.tr class="intro-x">
+                                    <x-base.table.td
+                                        class="box w-10 whitespace-nowrap rounded-l-none rounded-r-none border-x-0 shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600"
+                                        data-schema-id="{{ $schema->id }}"
+                                        data-schema-title="{{ $schema->title }}"
+                                    >
+                                        <x-base.form-check.input 
+                                            type="checkbox"
+                                            :checked="$schema->id == $publish_survey->schema_id"
+                                        />
+                                    </x-base.table.td>
+                                    <x-base.table.td class="box rounded-l-none rounded-r-none border-x-0 shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600">
+                                        <div class="flex items-center">
+                                            <a class="whitespace-nowrap font-medium" href="">
+                                                {{ $schema->title ?? 'N/A' }}
+                                            </a>
+                                        </div>
+                                    </x-base.table.td>
+                                    <x-base.table.td @class([
+                                        'box w-56 rounded-l-none rounded-r-none border-x-0 shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600',
+                                        'before:absolute before:inset-y-0 before:left-0 before:my-auto before:block before:h-8 before:w-px before:bg-slate-200 before:dark:bg-darkmode-400',
+                                    ])>
+                                        <div class="flex items-center justify-center">
+                                            @can('delete users')
+                                                <a class="mr-3 flex items-center text-primary"
+                                                    data-tw-toggle="modal" 
+                                                    data-tw-target="#modal-survey-preview"
+                                                    data-survey-id="{{ $schema->id }}"
+                                                    href="#"
+                                                >
+                                                    <x-base.lucide class="mr-1 h-4 w-4" icon="eye" />
+                                                    View
+                                                </a>   
+                                            @endcan                                
+                                        </div>                        
+                                    </x-base.table.td>
+                                </x-base.table.tr>
+                            @endif
+                        @endforeach
+                    
+                    </x-base.table.tbody>
+                </x-base.table>
                 
-                </x-base.table.tbody>
-            </x-base.table>
-            
-            <div class="mt-6 mb-6 flex flex-col justify-end gap-2 md:flex-row">
-                <x-base.button type="button" as="a" href="{{ route('publish-surveys.edit', $publish_survey->id) }}" class="w-full border-slate-300 py-3 text-slate-500 dark:border-darkmode-400 md:w-52">
-                    Previous
-                </x-base.button>
-                <x-base.button type="submit" id="next-button" variant="primary" class="w-full py-3 md:w-52">
-                    Next
-                    <input type="hidden" id="selected-schema-id" name="selected-schema-id" value="{{ $publish_survey->schema_id }}">
-                    <input type="hidden" id="selected-schema-title" name="title">
-                </x-base.button>
-            </div>
-        </form>       
-    </div>
-    <!-- BEGIN: Survey Schema List -->
-    
-    <!-- BEGIN: Pagination -->
-    <div class="intro-y col-span-12 flex flex-wrap items-center sm:flex-row sm:flex-nowrap">
-        <x-base.pagination class="w-full sm:mr-auto sm:w-auto">
-            <!-- First Page Link -->
-            @if ($schemas->onFirstPage())
-                <x-base.pagination.link disabled>
-                    <x-base.lucide class="h-4 w-4" icon="ChevronsLeft" />
-                </x-base.pagination.link>
-            @else
-                <x-base.pagination.link href="{{ $schemas->url(1) }}">
-                    <x-base.lucide class="h-4 w-4" icon="ChevronsLeft" />
-                </x-base.pagination.link>
-            @endif
-        
-            <!-- Previous Page Link -->
-            @if ($schemas->onFirstPage())
-                <x-base.pagination.link disabled>
-                    <x-base.lucide class="h-4 w-4" icon="ChevronLeft" />
-                </x-base.pagination.link>
-            @else
-                <x-base.pagination.link href="{{ $schemas->previousPageUrl() }}">
-                    <x-base.lucide class="h-4 w-4" icon="ChevronLeft" />
-                </x-base.pagination.link>
-            @endif
-        
-            <!-- Page Numbers -->
-            @foreach ($schemas->getUrlRange(max(1, $schemas->currentPage() - 1), min($schemas->lastPage(), $schemas->currentPage() + 1)) as $page => $url)
-                @if ($page == $schemas->currentPage())
-                    <x-base.pagination.link active>{{ $page }}</x-base.pagination.link>
-                @else
-                    <x-base.pagination.link href="{{ $url }}">{{ $page }}</x-base.pagination.link>
-                @endif
-            @endforeach
-        
-            <!-- Next Page Link -->
-            @if ($schemas->hasMorePages())
-                <x-base.pagination.link href="{{ $schemas->nextPageUrl() }}">
-                    <x-base.lucide class="h-4 w-4" icon="ChevronRight" />
-                </x-base.pagination.link>
-            @else
-                <x-base.pagination.link disabled>
-                    <x-base.lucide class="h-4 w-4" icon="ChevronRight" />
-                </x-base.pagination.link>
-            @endif
-        
-            <!-- Last Page Link -->
-            @if ($schemas->hasMorePages())
-                <x-base.pagination.link href="{{ $schemas->url($schemas->lastPage()) }}">
-                    <x-base.lucide class="h-4 w-4" icon="ChevronsRight" />
-                </x-base.pagination.link>
-            @else
-                <x-base.pagination.link disabled>
-                    <x-base.lucide class="h-4 w-4" icon="ChevronsRight" />
-                </x-base.pagination.link>
-            @endif
-        </x-base.pagination>
-        
+                <div class="mt-6 mb-6 flex flex-col justify-end gap-2 md:flex-row">
+                    <x-base.button type="button" as="a" href="{{ route('publish-surveys.edit', $publish_survey->id) }}" class="w-full border-slate-300 py-3 text-slate-500 dark:border-darkmode-400 md:w-52">
+                        Previous
+                    </x-base.button>
+                    <x-base.button type="submit" id="next-button" variant="primary" class="w-full py-3 md:w-52">
+                        Next
+                        <input type="hidden" id="selected-schema-id" name="selected-schema-id" value="{{ $publish_survey->schema_id }}">
+                        <input type="hidden" id="selected-schema-title" name="title">
+                    </x-base.button>
+                </div>
+            </form>       
+        </div>
+        <!-- BEGIN: Survey Schema List -->
 
-        <form method="GET" action="{{ route('publish-surveys.selectSchema', $publish_survey->id) }}" class="mt-3 w-20 sm:mt-0">
-            <x-base.form-select class="!box" name="per_page" onchange="this.form.submit()">
-                <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
-                <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
-                <option value="35" {{ $perPage == 35 ? 'selected' : '' }}>35</option>
-                <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
-            </x-base.form-select>
-        </form>
-    </div>
-    <!-- END: Pagination -->
-    
+        <!-- BEGIN: Pagination -->
+        <div class="intro-y col-span-12 flex flex-wrap items-center sm:flex-row sm:flex-nowrap">
+            <x-base.pagination class="w-full sm:mr-auto sm:w-auto">
+                <!-- First Page Link -->
+                @if ($schemas->onFirstPage())
+                    <x-base.pagination.link disabled>
+                        <x-base.lucide class="h-4 w-4" icon="ChevronsLeft" />
+                    </x-base.pagination.link>
+                @else
+                    <x-base.pagination.link href="{{ $schemas->url(1) }}">
+                        <x-base.lucide class="h-4 w-4" icon="ChevronsLeft" />
+                    </x-base.pagination.link>
+                @endif
+            
+                <!-- Previous Page Link -->
+                @if ($schemas->onFirstPage())
+                    <x-base.pagination.link disabled>
+                        <x-base.lucide class="h-4 w-4" icon="ChevronLeft" />
+                    </x-base.pagination.link>
+                @else
+                    <x-base.pagination.link href="{{ $schemas->previousPageUrl() }}">
+                        <x-base.lucide class="h-4 w-4" icon="ChevronLeft" />
+                    </x-base.pagination.link>
+                @endif
+            
+                <!-- Page Numbers -->
+                @foreach ($schemas->getUrlRange(max(1, $schemas->currentPage() - 1), min($schemas->lastPage(), $schemas->currentPage() + 1)) as $page => $url)
+                    @if ($page == $schemas->currentPage())
+                        <x-base.pagination.link active>{{ $page }}</x-base.pagination.link>
+                    @else
+                        <x-base.pagination.link href="{{ $url }}">{{ $page }}</x-base.pagination.link>
+                    @endif
+                @endforeach
+            
+                <!-- Next Page Link -->
+                @if ($schemas->hasMorePages())
+                    <x-base.pagination.link href="{{ $schemas->nextPageUrl() }}">
+                        <x-base.lucide class="h-4 w-4" icon="ChevronRight" />
+                    </x-base.pagination.link>
+                @else
+                    <x-base.pagination.link disabled>
+                        <x-base.lucide class="h-4 w-4" icon="ChevronRight" />
+                    </x-base.pagination.link>
+                @endif
+            
+                <!-- Last Page Link -->
+                @if ($schemas->hasMorePages())
+                    <x-base.pagination.link href="{{ $schemas->url($schemas->lastPage()) }}">
+                        <x-base.lucide class="h-4 w-4" icon="ChevronsRight" />
+                    </x-base.pagination.link>
+                @else
+                    <x-base.pagination.link disabled>
+                        <x-base.lucide class="h-4 w-4" icon="ChevronsRight" />
+                    </x-base.pagination.link>
+                @endif
+            </x-base.pagination>
+            
+
+            <form method="GET" action="{{ route('publish-surveys.selectSchema', $publish_survey->id) }}" class="mt-3 w-20 sm:mt-0">
+                <x-base.form-select class="!box" name="per_page" onchange="this.form.submit()">
+                    <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                    <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
+                    <option value="35" {{ $perPage == 35 ? 'selected' : '' }}>35</option>
+                    <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                </x-base.form-select>
+            </form>
+        </div>
+        <!-- END: Pagination -->
+    @else
+        <!-- BEGIN: No Available Schema Message -->
+        <div class="intro-y self-center col-span-12 flex flex-wrap items-center sm:flex-row sm:flex-nowrap">
+            <x-base.alert
+                class="mt-5 mb-10 bg-warning/20 dark:border-darkmode-400 dark:bg-darkmode-400"
+                variant="outline-warning"
+                dismissible
+            >
+                <div class="flex items-center">
+                    <span>
+                        <x-base.lucide
+                            class="mr-3 h-6 w-6"
+                            icon="AlertTriangle"
+                        />
+                    </span>
+                    <span class="text-slate-800 dark:text-slate-500">
+                        <p class="font-semibold">No Available Survey Schema</p>
+                        <p class="text-sm">There are currently no available survey schemas for selection. Please ensure at least one schema is set to "Available" status.</p>
+                    </span>
+                    <x-base.alert.dismiss-button class="dark:text-white">
+                        <x-base.lucide
+                            class="h-4 w-4"
+                            icon="X"
+                        />
+                    </x-base.alert.dismiss-button>
+                </div>
+            </x-base.alert>
+        </div>
+        <!-- END: No Available Schema Message -->
+
+        <div class="mt-6 mb-6 flex flex-col justify-end gap-2 md:flex-row">
+            <x-base.button type="button" as="a" href="{{ route('publish-surveys.edit', $publish_survey->id) }}" class="w-full border-slate-300 py-3 text-slate-500 dark:border-darkmode-400 md:w-52">
+                Previous
+            </x-base.button>
+            <x-base.button type="button" as="a" href="{{ route('publish-surveys.index') }}" variant="warning" class="w-full py-3 md:w-52">
+                Cancel
+            </x-base.button>            
+        </div>      
+    @endif
+
     <!-- BEGIN: Modal Survey Preview -->
     <x-base.dialog id="modal-survey-preview" size="lg">
         <x-base.dialog.panel class="p-10 text-center">

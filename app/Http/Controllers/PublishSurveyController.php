@@ -75,6 +75,7 @@ class PublishSurveyController extends Controller
             'title' => $validated['title'],
             'description' => $validated['description'],
             'execution_team_id' => $team->id,
+            'status' => 'Draft',
         ]);
 
         return response()->json([
@@ -167,7 +168,8 @@ class PublishSurveyController extends Controller
         $perPage = (int) $request->get('per_page', 10);
         $search = $request->get('search', null);
     
-        $schemas = SurveySchema::query();
+        // Fetch only schemas with status "Available"
+        $schemas = SurveySchema::where('status', 'Available');
     
         if (!empty($search)) {
             $schemas->where('name', 'like', '%' . $search . '%');
