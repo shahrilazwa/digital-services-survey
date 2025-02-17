@@ -8,40 +8,43 @@ use App\Models\PublishedSurvey;
 
 class SurveyResultsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index(Request $request)
     {
         $breadcrumbs = [
             ['label' => 'Dashboard', 'url' => route('dashboard'), 'active' => false],
             ['label' => 'Survey Results', 'url' => route('survey-results.index'), 'active' => true],
         ];
-
+    
         $perPage = $request->get('per_page', 10);
         $search = $request->get('search');
         $status = $request->get('status');
-        $publishSurveys = PublishedSurvey::query();
-
+    
+        // Fetch only surveys that are NOT in Draft status
+        $publishSurveys = PublishedSurvey::where('status', '!=', 'Draft');
+    
         if ($search) {
-            // Filter permissions by the search term in the 'name' column
             $publishSurveys->where('title', 'like', '%' . $search . '%');
         }
-
-        // Apply status filter if it's not "Status" (default option)
+    
+        // Apply status filter if it's provided
         if ($status && $status !== 'Status') {
             $publishSurveys->where('status', $status);
         }
-
-        $publishSurveys = $publishSurveys->paginate($perPage)->appends(['search' => $search, 'status' => $status, 'per_page' => $perPage]);
+    
+        $publishSurveys = $publishSurveys->paginate($perPage)->appends([
+            'search' => $search, 
+            'status' => $status, 
+            'per_page' => $perPage
+        ]);
         
         // Attach completed survey count to each published survey
         foreach ($publishSurveys as $survey) {
             $survey->completed_surveys = SurveyResult::countCompletedSurveys($survey->id);
         }        
-
+    
         return view('auth.survey-results.index', compact('publishSurveys', 'breadcrumbs', 'perPage', 'search', 'status'));
-    }
+    }    
 
     /**
      * Show the form for creating a new resource.
@@ -64,14 +67,7 @@ class SurveyResultsController extends Controller
      */
     public function show(string $id)
     {
-        // $breadcrumbs = [
-        //     ['label' => 'Home', 'url' => route('dashboard'), 'active' => false],
-        //     ['label' => 'Publish Surveys', 'url' => route('publish-surveys.index'), 'active' => false],
-        //     ['label' => 'Survey Results', 'url' => route('survey-results.view', $id), 'active' => true],
-        // ];
-
-        // $surveyResults = SurveyResult::where('published_survey_id', $id)->get();
-        // return view('auth.survey-results.show', compact('surveyResults', 'breadcrumbs'));
+        // 
     }
 
     /**
