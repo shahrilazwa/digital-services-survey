@@ -1,30 +1,46 @@
-### **Audit Trail Documentation**
+# **Audit Trail Documentation**  
+
+## **Overview**  
+This document provides a comprehensive explanation of the **audit trail system** implemented in the **Digital Services Survey** project. The system ensures **accountability, security, and transparency** by logging key user activities related to **roles, permissions, surveys, and other entities**.  
+
+The project utilizes a **custom helper class** called `ActivityLogger`, which records actions performed by users and stores them in the `activity_logs` table.  
 
 ---
 
-## **1️⃣ Overview**  
-The **Digital Services Survey** project implements an **audit trail (activity logging)** system to **track critical user actions** within the application. This ensures **transparency, accountability, and security** by recording all **role, permission, and survey-related activities**.
+## **Tracked Activities**  
+The audit trail system logs critical actions performed by users, including the creation, updating, and deletion of various entities.  
 
-The audit trail functionality is powered by a **custom helper class** called `ActivityLogger`, which logs user activities in the `activity_logs` table.
+### **1. User Management**  
+- **Create User** – Logged when a new user is added to the system.  
+- **Update User** – Logged when user details are modified.  
+- **Delete User** – Logged when a user is removed.  
+
+### **2. Role & Permission Management**  
+- **Create Role** – Logged when a new role is added.  
+- **Update Role** – Logged when a role is modified.  
+- **Delete Role** – Logged when a role is deleted.  
+- **Create Permission** – Logged when a new permission is created.  
+- **Update Permission** – Logged when a permission is modified.  
+- **Delete Permission** – Logged when a permission is deleted.  
+
+### **3. Survey Schema Management**  
+- **Create Survey Schema** – Logged when a new schema is designed.  
+- **Update Survey Schema** – Logged when an existing schema is modified.  
+- **Approve Survey Schema** – Logged when a schema is reviewed and approved.  
+- **Delete Survey Schema** – Logged when a schema is removed.  
+
+### **4. Survey Publication**  
+- **Publish Survey** – Logged when a survey is published.  
+- **Close Survey** – Logged when a published survey is closed.  
+
+### **5. Survey Results**  
+- **Submit Survey Response** – Logged when a user submits a survey response.  
+- **Update Survey Response** – Logged when a survey response is modified.  
 
 ---
 
-## **2️⃣ Tracked Activities**  
-The system records activities related to **roles, permissions, users, and surveys**.
-
-| **Entity**          | **Actions Logged** |
-|---------------------|-------------------|
-| **Users**          | Created, Updated, Deleted |
-| **Roles**          | Created, Updated, Deleted |
-| **Permissions**     | Created, Updated, Deleted |
-| **Survey Schema**  | Created, Updated, Approved, Deleted |
-| **Published Surveys** | Published, Closed, Reopened |
-| **Survey Responses** | Submitted, Updated |
-
----
-
-## **3️⃣ Audit Log Table Structure**  
-All activities are stored in the `activity_logs` table.
+## **Audit Log Table Structure**  
+All activities are stored in the `activity_logs` table, which maintains a detailed record of user actions.  
 
 | **Column**       | **Data Type** | **Description** |
 |------------------|-------------|----------------|
@@ -38,12 +54,20 @@ All activities are stored in the `activity_logs` table.
 
 ---
 
-## **4️⃣ How Audit Logging Works**  
-The `ActivityLogger` helper class automatically logs activities **whenever a user creates, updates, or deletes records**.
+## **Role-Based Access to Audit Logs**  
+Only **authorized users** can access and manage audit logs. Below is the access matrix:
 
-✅ **Automatic tracking** of role, permission, and survey-related actions.  
-✅ **Stores user information** to identify who performed each action.  
-✅ **Includes JSON metadata** to provide additional context about changes.  
+| Permission | Survey Admin | Super Admin | Survey Manager | Survey Designer | Survey Reviewer | Survey Publisher | Survey Operator | Data Analyst |
+|------------|-------------|-------------|---------------|----------------|----------------|----------------|----------------|--------------|
+| View Audit Logs | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Manage Audit Logs | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+
+✅ = Has permission | ❌ = No permission  
+
+---
+
+## **Integration in Controllers**  
+The `ActivityLogger::log()` function is integrated into various controllers **to track changes automatically**.
 
 ### **Example Log Entry in `activity_logs` Table**  
 ```json
@@ -59,11 +83,6 @@ The `ActivityLogger` helper class automatically logs activities **whenever a use
     "created_at": "2025-02-18 12:30:45"
 }
 ```
-
----
-
-## **5️⃣ Integration in Controllers**  
-The `ActivityLogger::log()` function is integrated into various controllers **to track changes automatically**.
 
 ### **Logging Role Creation**  
 ```php
@@ -99,9 +118,7 @@ ActivityLogger::log('Deleted', 'Permission', $permission->id, [
 
 ---
 
-## **6️⃣ Future Enhancements**  
-📌 **Implement Soft Deletes** – Allow restoring deleted roles and permissions.  
-📌 **Create an Audit Log UI** – Provide a dashboard to view activity logs in real time.  
-📌 **Enhance Filtering** – Enable filtering logs by date, user, or entity type.  
+## **Conclusion**  
+This document provides an overview of the audit trail implementation in the **Digital Services Survey** project. The structured approach ensures that **all key activities** are logged, improving **security, compliance, and accountability**.
 
----
+For further inquiries or modifications, please contact the **Survey Admin** or **Super Admin** of the system.
