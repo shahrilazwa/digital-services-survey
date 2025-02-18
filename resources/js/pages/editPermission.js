@@ -1,17 +1,20 @@
 (function () {
     "use strict";
+    const getInputValue = (form, selector) => form.querySelector(selector)?.value || null;
 
     function onSubmit(pristine, form) {
         let valid = pristine.validate();
 
         if (valid) {
-            let permissionId = form.querySelector('input[name="permission-id"]').value;
+            
             let formData = {
-                id: form.querySelector('input[name="permission-id"]').value,
-                name: form.querySelector('input[name="permission-name"]').value,
+                id: getInputValue(form, 'input[name="perm-id"]'),
+                name: getInputValue(form, 'input[name="perm-name"]'),
+                group: getInputValue(form, 'input[name="perm-group"]'),
+                description: getInputValue(form, 'textarea[name="perm-desc"]'),
             };
 
-            axios.put(`/permissions/${permissionId}`, formData)
+            axios.put(`/permissions/${formData.id}`, formData)
             .then(function (response) {
                 if (response.status === 200 || response.status === 201) {
                     console.log(response.data.message);

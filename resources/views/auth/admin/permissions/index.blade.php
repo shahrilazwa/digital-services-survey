@@ -37,7 +37,10 @@
                             ID
                         </x-base.table.th>
                         <x-base.table.th class="whitespace-nowrap border-b-0 text-left">
-                            PERMISSION NAME
+                            NAME
+                        </x-base.table.th>
+                        <x-base.table.th class="whitespace-nowrap border-b-0 text-left">
+                            GROUP
                         </x-base.table.th>
                         <x-base.table.th class="whitespace-nowrap border-b-0 text-center">
                             ACTIONS
@@ -52,6 +55,9 @@
                             </x-base.table.td>
                             <x-base.table.td class="box w-56 rounded-l-none rounded-r-none border-x-0 text-left shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600">
                                 {{ $permission->name }}
+                            </x-base.table.td>
+                            <x-base.table.td class="box w-56 rounded-l-none rounded-r-none border-x-0 text-left shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600">
+                                {{ $permission->group ?? 'N/A' }}
                             </x-base.table.td>
                             <x-base.table.td @class([
                                 'box w-56 rounded-l-none rounded-r-none border-x-0 shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600',

@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Permission;
+use App\Helpers\ActivityLogger;
+use Exception;
+use Illuminate\Support\Facades\Log;
 
 class PermissionController extends Controller
 {
@@ -54,15 +58,39 @@ class PermissionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'=>['required','string','min:6','unique:permissions,name']
+            'name' => ['required', 'string', 'min:6', 'unique:permissions,name'],
+            'group' => ['nullable', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:500']
         ], [
             'name.required' => 'The permission name is required.',
             'name.string' => 'The permission name must be a valid string.',
             'name.min' => 'The permission name must be at least 6 characters.',
             'name.unique' => 'The permission name has already been taken. Please choose another name.',
+            'group.string' => 'The permission group must be a valid string.',
+            'description.string' => 'The description must be a valid string.',
+            'description.max' => 'The description cannot exceed 500 characters.'
         ]);
-        Permission::create(['name'=>$request->name]);
-        return response()->json(['message'=>'Permission created successfully.'], 201); 
+
+        $userId = Auth::check() ? Auth::id() : 0; // Fallback to 0 if no user is authenticated
+
+        Permission::create([
+            'name' => $request->name,
+            'group' => $request->group,
+            'description' => $request->description,
+            'created_by' => $userId,
+        ]);
+
+        ActivityLogger::log('Created', 'Permission', $request->id, [
+            'title' => $request->name,
+            'description' => $request->description,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Permission created.', 
+            'details' => $request->title,
+            'id' => $request->id,
+        ], 201);        
     }
 
     /**
@@ -89,21 +117,62 @@ class PermissionController extends Controller
     public function update(Request $request, Permission $permission)
     {  
         $request->validate([
-            'name' => ['required', 'string', 'min:6', 'unique:permissions,name,' . $request->id],
+            'name' => ['required', 'string', 'min:6', 'unique:permissions,name,' . $permission->id],
+            'group' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:500']
         ], [
             'name.required' => 'The permission name is required.',
             'name.string' => 'The permission name must be a valid string.',
             'name.min' => 'The permission name must be at least 6 characters.',
             'name.unique' => 'The permission name has already been taken. Please choose another name.',
+            'group.string' => 'The permission group must be a valid string.',
+            'description.string' => 'The description must be a valid string.',
+            'description.max' => 'The description cannot exceed 500 characters.'
         ]);
-        $permission->update(['name' => $request->name]);
-        return response()->json(['message' => 'Permission updated successfully.'], 200);
+
+        $userId = Auth::check() ? Auth::id() : 0; // Fallback to 0 if no user is authenticated
+
+        $permission->update([
+            'name' => $request->name,
+            'group' => $request->group,
+            'description' => $request->description,
+            'updated_by' => $userId,
+        ]);
+
+        ActivityLogger::log('Updated', 'Permission', $request->id, [
+            'title' => $request->name,
+            'description' => $request->description,
+        ]);        
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Permission updated.', 
+            'details' => $request->title,
+            'id' => $request->id,
+        ], 201);         
     }
 
     public function destroy(string $id)
     {
-        $permission = Permission::findById($id);
-        $permission->delete();
-        return redirect('permissions')->with('status', 'Permission Deleted Successfully');
+        try {
+            $permission = Permission::findById($id);
+            $permission->delete();
+
+            ActivityLogger::log('Created', 'Permission', $permission->id, [
+                'title' => $permission->name,
+                'description' => $permission->description,
+            ]);      
+
+            return redirect()->route('permissions.index')->with('success', 'Permission Deleted Successfully.');
+        } catch (Exception $e) {
+            // Log the detailed error
+            Log::error('Permission delete failed:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'permission_id' => $permission->id
+            ]);
+
+            return redirect()->route('schemas.index')->with('error', 'Failed to delete schema and its associated records.');
+        }            
     }
 }
