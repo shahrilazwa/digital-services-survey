@@ -65,7 +65,7 @@ public function index(Request $request)
 ### **2. Storing Messages in Controllers**
 Each controller method should follow a structured approach to handling success and error messages.
 
-#### ✅ **Create (Store) Function**
+#### **Create (Store) Function**
 ```php
 public function store(Request $request)
 {
@@ -108,7 +108,7 @@ public function store(Request $request)
 }
 ```
 
-#### ✅ **Update Function**
+#### **Update Function**
 ```php
 public function update(Request $request, Permission $permission)
 {
