@@ -142,5 +142,11 @@
 @endPushOnce
 
 @pushOnce('scripts')
+    <script>
+        window.routes = {
+            permissionsIndex: @json(route('permissions.index'))
+        };
+    </script>
+    
     @vite('resources/js/pages/editPermission.js')
 @endPushOnce

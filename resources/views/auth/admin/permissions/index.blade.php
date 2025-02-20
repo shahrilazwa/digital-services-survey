@@ -5,6 +5,7 @@
 @endsection
 
 @section('subcontent')
+    @dump(session()->all())
     <h2 class="intro-y mt-10 text-lg font-medium">Permission List</h2>
     <div class="mt-5 grid grid-cols-12 gap-6">
         <div class="intro-y col-span-12 mt-2 flex flex-wrap items-center sm:flex-nowrap">
@@ -71,7 +72,13 @@
                                         </a>
                                     @endcan
                                     @can('delete permissions')    
-                                        <a class="flex items-center text-danger" href="{{ url('permissions/'.$permission->id.'/delete') }}">
+                                        <a class="flex items-center text-danger"
+                                            href="#" 
+                                            data-tw-merge
+                                            data-id="{{ $permission->id }}"
+                                            data-name="{{ $permission->name }}"
+                                            id="delete-button"
+                                        >
                                             <x-base.lucide class="mr-1 h-4 w-4" icon="Trash" /> 
                                             Delete
                                         </a>
@@ -157,4 +164,81 @@
         </div>
         <!-- END: Pagination -->
     </div>
+
+    <!-- BEGIN: Delete Confirmation Content -->
+    <x-base.notification
+        class="flex"
+        id="delete-confirmation"
+    >
+        <x-base.lucide icon="HardDrive" />
+        <div class="ml-4 mr-4">
+            <div class="font-medium">Delete Permission</div>
+            <div class="mt-1 text-slate-500">
+                Are you sure you want to delete {{ $permission->name }} permission?
+            </div>
+            <div class="mt-1.5 flex font-medium">
+                <a
+                    class="text-primary dark:text-slate-400"
+                    href="{{ url('permissions/'.$permission->id.'/delete') }}"
+                >
+                    Confirm
+                </a>
+                <a
+                    class="ml-3 text-slate-500"
+                    href=""
+                >
+                    Cancel
+                </a>
+            </div>
+        </div>
+    </x-base.notification>
+    <!-- END: Delete Confirmation Content -->
+
+    @foreach (['success', 'error'] as $type)
+        @if (session($type))
+            <div id="{{ $type }}-message" data-message="{{ session($type) }}"></div>
+        @endif
+    @endforeach   
+
+    <!-- BEGIN: Success Notification Content -->
+    <x-base.notification
+        class="flex"
+        id="success-notification-content"
+        data-message="{{ session('success') }}"
+    >
+        <x-base.lucide
+            class="text-success"
+            icon="CheckCircle"
+        />
+        <div class="ml-4 mr-4">
+            <div class="font-medium">Success!</div>
+            <div class="mt-1 text-slate-500">
+                {{ session('success') }}
+            </div>
+        </div>
+    </x-base.notification>
+    <!-- END: Success Notification Content -->
+
+    <!-- BEGIN: Error Notification Content -->
+    <x-base.notification
+        class="flex"
+        id="error-notification-content"
+        data-message="{{ session('error') }}"
+    >
+        <x-base.lucide
+            class="text-danger"
+            icon="XCircle"
+        />
+        <div class="ml-4 mr-4">
+            <div class="font-medium">Failed!</div>
+            <div class="mt-1 text-slate-500">
+                {{ session('error') }}
+            </div>
+        </div>
+    </x-base.notification>
+    <!-- END: Error Notification Content -->      
 @endsection
+
+@pushOnce('scripts')
+    @vite('resources/js/pages/listPermission.js')
+@endPushOnce
