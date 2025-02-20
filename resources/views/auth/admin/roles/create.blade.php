@@ -21,7 +21,7 @@
                         </div>
                         <div class="mt-5">
                             <x-base.form-inline class="mt-5 flex-col items-start pt-5 first:mt-0 first:pt-0 xl:flex-row" formInline>
-                                <x-base.form-label class="xl:!mr-10 xl:w-64">
+                                <x-base.form-label class="xl:!mr-10 xl:w-64" for="role-name">
                                     <div class="text-left">
                                         <div class="flex items-center">
                                             <div class="font-medium">Role Name</div>
@@ -45,6 +45,29 @@
                                     </div>
                                 </div>
                             </x-base.form-inline>
+                            <x-base.form-inline
+                                class="mt-2 flex-col items-start pt-5 first:mt-0 first:pt-0 xl:flex-row"
+                                formInline
+                            >
+                                <x-base.form-label class="xl:!mr-10 xl:w-64" for="role-desc">
+                                    <div class="text-left">
+                                        <div class="flex items-center">
+                                            <div class="font-medium">Description</div>
+                                        </div>
+                                        <div class="mt-3 text-xs leading-relaxed text-slate-500">
+                                            Provide a detailed explanation of the role.
+                                        </div>                                        
+                                    </div>
+                                </x-base.form-label>
+                                
+                                <div class="mt-3 w-full flex-1 xl:mt-0">
+                                    <x-base.form-textarea
+                                        id="role-desc" 
+                                        name="role-desc" 
+                                        placeholder="Brief description of role"
+                                    ></x-base.form-textarea>
+                                </div>
+                            </x-base.form-inline>                            
                         </div>
                     </div>
                 </div>

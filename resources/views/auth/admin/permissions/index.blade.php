@@ -5,7 +5,7 @@
 @endsection
 
 @section('subcontent')
-    @dump(session()->all())
+    {{-- @dump(session()->all()) --}}
     <h2 class="intro-y mt-10 text-lg font-medium">Permission List</h2>
     <div class="mt-5 grid grid-cols-12 gap-6">
         <div class="intro-y col-span-12 mt-2 flex flex-wrap items-center sm:flex-nowrap">
@@ -198,7 +198,7 @@
         @if (session($type))
             <div id="{{ $type }}-message" data-message="{{ session($type) }}"></div>
         @endif
-    @endforeach   
+    @endforeach
 
     <!-- BEGIN: Success Notification Content -->
     <x-base.notification

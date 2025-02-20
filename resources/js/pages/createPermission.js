@@ -16,7 +16,7 @@
             .then(function (response) {
                 if (response.status === 200 || response.status === 201) {
                     console.log(response.data.message);
-                    window.location.href = '/permissions';
+                    window.location.href = `${window.routes.permissionsIndex}?success=Permission '${formData.name}' created successfully.`;
                 }
             })
             .catch(function (error) {
@@ -29,6 +29,7 @@
                 } else {
                     console.error('An error occurred:', error.response ? error.response.data : error.message);
                 }
+                window.location.href = `${window.routes.permissionsIndex}?error=Failed to create permission '${formData.name}'.`;
             });
         }
     }

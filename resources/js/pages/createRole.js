@@ -1,5 +1,6 @@
 (function () {
     "use strict";
+    const getInputValue = (form, selector) => form.querySelector(selector)?.value || null;
 
     function onSubmit(pristine, form) {
         let valid = pristine.validate();
@@ -7,7 +8,8 @@
         if (valid) {
             // Prepare form data for AJAX submission
             let formData = {
-                name: form.querySelector('input[name="role-name"]').value,
+                name: getInputValue(form, 'input[name="role-name"]'),
+                description: getInputValue(form, 'textarea[name="role-desc"]'),
             };
 
             axios.post('/roles', formData)

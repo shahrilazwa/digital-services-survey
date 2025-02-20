@@ -85,10 +85,13 @@ class PermissionController extends Controller
                 'title' => 'Permission Created',
                 'description' => $permission->name . ' permission created by ' . (Auth::check() ? Auth::user()->name : 'System'),
             ]);
-    
-            return redirect()->route('permissions.index', [
-                'success' => "Permission '{$permission->name}' created successfully."
-            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Permission created.', 
+                'details' => $request->title,
+                'id' => $request->id,
+            ], 201);            
         
         } catch (Exception $e) {
             // Log the detailed error
@@ -127,6 +130,9 @@ class PermissionController extends Controller
 
     public function update(Request $request, Permission $permission)
     {
+        // Force an error for testing purposes
+        // throw new Exception("This is a test error for the error notification.");
+        
         try {
             $request->validate([
                 'name' => ['required', 'string', 'min:6', 'unique:permissions,name,' . $permission->id],
@@ -170,10 +176,11 @@ class PermissionController extends Controller
                 'permission_id' => $permission->id
             ]);
 
-            // Redirect with error message in query parameters
-            return redirect()->route('permissions.index', [
-                'error' => "Failed to update '{$request->name}' permission."
-            ]);
+            return response()->json([
+                'success' => false,
+                'message' => "Failed to update permission {$request->name}.",
+                'error' => $e->getMessage(),
+            ], 500);
         }            
     }
 
@@ -189,7 +196,7 @@ class PermissionController extends Controller
                 'description' => $permissionName . ' permission deleted by ' . (Auth::check() ? Auth::user()->name : 'System'),
             ]);      
 
-            return redirect()->route('permissions.index')->with('success', "Permission '{$permissionName}' deleted successfully.");
+            return redirect()->route('permissions.index')->with('success', "Permission {$permissionName} deleted successfully.");
         } catch (Exception $e) {
             // Log the detailed error
             Log::error('Permission delete failed:', [

@@ -16,36 +16,31 @@
         }).showToast();
     });
     
-    // Success notification after page reload
-    let successMessageElement = $("#success-message");
-    if (successMessageElement.length > 0) {  // Ensure element exists
-        Toastify({
-            node: $("#success-notification-content")
-                .clone()
-                .removeClass("hidden")[0],
-            duration: -1,
-            newWindow: true,
-            close: true,
-            gravity: "top",
-            position: "right",
-            stopOnFocus: true,
-        }).showToast();
-    };
+    // Function to show Toast notifications and clear session values
+    function showToastAndClearSession(type, messageElementId, notificationElementId) {
 
-    // Error notification after page reload
-    let errorMessageElement = $("#error-message");
-    if (errorMessageElement.length > 0) {  // Ensure element exists
-        Toastify({
-            node: $("#error-notification-content")
-                .clone()
-                .removeClass("hidden")[0],
-            duration: -1,
-            newWindow: true,
-            close: true,
-            gravity: "top",
-            position: "right",
-            stopOnFocus: true,
-        }).showToast();
-    };      
+        let messageElement = $(`#${messageElementId}`);
+        if (messageElement.length > 0) {  // Ensure element exists
+            Toastify({
+                node: $(`#${notificationElementId}`)
+                    .clone()
+                    .removeClass("hidden")[0],
+                duration: 3000,
+                newWindow: true,
+                close: true,
+                gravity: "top",
+                position: "right",
+                stopOnFocus: true,
+                callback: function () {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            }).showToast();
+        };
+    }
+      
+    // Show and clear success notification
+    showToastAndClearSession("success", "success-message", "success-notification-content");
 
+    // Show and clear error notification
+    showToastAndClearSession("error", "error-message", "error-notification-content");
 })();
