@@ -1,6 +1,6 @@
 # **Toast Notification Standards**
 
-## **1️⃣ Overview**
+## **Overview**
 This document establishes the **standardized approach** to implementing **toast notifications** for success and error messages in the **Digital Services Survey** project. 
 
 Toast notifications are used to provide **real-time user feedback** after performing operations like:
@@ -16,7 +16,7 @@ By following this standard, we ensure:
 
 ---
 
-## **2️⃣ Notification Types**
+## **Notification Types**
 There are two types of toast notifications:
 
 | Notification Type | Description | Example |
@@ -26,7 +26,7 @@ There are two types of toast notifications:
 
 ---
 
-## **3️⃣ Standard Implementation in Laravel Controllers**
+## **Standard Implementation in Laravel Controllers**
 Each function in a controller **must**:
 1. **Use a `try-catch` block** to handle exceptions.
 2. **Log errors** using Laravel’s `Log::error()` for debugging.
@@ -180,7 +180,7 @@ Toast notifications **automatically detect** session messages and **display them
 ```
 ---
 
-## **5️⃣ Using Dynamic Routes in JavaScript**
+## **Using Dynamic Routes in JavaScript**
 To **avoid hardcoding routes** in JavaScript, we **store routes dynamically** in Blade before loading JavaScript files.
 
 ### **Blade Dynamic Route Setup**
@@ -206,7 +206,7 @@ This ensures **future route changes** will automatically be applied to JavaScrip
 
 ---
 
-## **6️⃣ Summary of the Standard**
+## **Summary of the Standard**
 | Component | Standard |
 |------------|-------------|
 | **Success/Error Messages** | Stored in **session flash messages** |
@@ -218,7 +218,7 @@ This ensures **future route changes** will automatically be applied to JavaScrip
 
 ---
 
-## **7️⃣ Conclusion**
+## **Conclusion**
 By following this **standardized approach**, we ensure:
 - ✅ **Consistent UI behavior**
 - ✅ **Better error debugging**
