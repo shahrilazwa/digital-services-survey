@@ -2,6 +2,8 @@
 
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ThemeController;
@@ -16,6 +18,14 @@ $roles = Role::pluck('name')->implode('|');
 Route::get('/', [PageController::class, 'login'])->name('login');
 Route::get('/surveys/{id}', [PublishSurveyController::class, 'showSurvey'])->name('surveys.show');
 Route::post('/survey-results/{id}', [PublishSurveyController::class, 'storeSurveyResult'])->name('survey-results.store');
+
+Route::post('/clear-session-message', function (Request $request) {
+    $key = $request->input('key');
+    if ($key && Session::has($key)) {
+        Session::forget($key);
+    }
+    return response()->json(['success' => true]);
+});
 
 // Authenticated users routes with dynamic roles
 Route::group(['middleware' => ['role:' . $roles]], function () {

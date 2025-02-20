@@ -239,6 +239,10 @@
     <!-- END: Error Notification Content -->      
 @endsection
 
+@pushOnce('vendors')
+    @vite('resources/js/vendors/axios.js')
+@endPushOnce
+
 @pushOnce('scripts')
     @vite('resources/js/pages/listPermission.js')
 @endPushOnce

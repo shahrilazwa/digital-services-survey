@@ -35,7 +35,15 @@
                     window.history.replaceState({}, document.title, window.location.pathname);
                 }
             }).showToast();
+
+            clearSessionMessage(messageElementId);
         };
+    }
+
+    function clearSessionMessage(sessionKey) {
+        axios.post("/clear-session-message", { key: sessionKey })
+            .then(response => console.log(`Session key '${sessionKey}' cleared.`))
+            .catch(error => console.error(`Failed to clear session key '${sessionKey}':`, error));
     }
       
     // Show and clear success notification
