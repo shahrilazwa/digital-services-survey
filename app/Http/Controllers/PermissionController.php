@@ -81,7 +81,7 @@ class PermissionController extends Controller
                 'created_by' => $userId,
             ]);
     
-            ActivityLogger::log('Created', 'Permission', $permission->id, [
+            ActivityLogger::log('Permission Created', 'Permission', $permission->id, [
                 'title' => 'Permission Created',
                 'description' => $permission->name . ' permission created by ' . (Auth::check() ? Auth::user()->name : 'System'),
             ]);
@@ -157,7 +157,7 @@ class PermissionController extends Controller
                 'updated_by' => $userId,
             ]);
 
-            ActivityLogger::log('Updated', 'Permission', $request->id, [
+            ActivityLogger::log('Permission Updated', 'Permission', $request->id, [
                 'title' => 'Permission Updated',
                 'description' => $request->name . ' permission updated by ' . (Auth::check() ? Auth::user()->name : 'System'),
             ]);        
@@ -191,7 +191,7 @@ class PermissionController extends Controller
             $permissionName = $permission->name;
             $permission->delete();
 
-            ActivityLogger::log('Deleted', 'Permission', $permission->id, [
+            ActivityLogger::log('Permission Deleted', 'Permission', $permission->id, [
                 'title' => 'Permission Deleted',
                 'description' => $permissionName . ' permission deleted by ' . (Auth::check() ? Auth::user()->name : 'System'),
             ]);      
