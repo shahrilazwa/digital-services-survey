@@ -172,7 +172,7 @@
                 </div>
             @empty
                 <p class="text-sm text-slate-500 text-center">No recent activities</p>
-                @endforelse
+            @endforelse
         </x-base.popover.panel>
     </x-base.popover>
     <!-- END: Notifications  -->
