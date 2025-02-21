@@ -144,15 +144,12 @@
         </x-base.popover.button>
         <x-base.popover.panel class="mt-2 w-[280px] p-5 sm:w-[350px]">
             <div class="mb-5 font-medium">Notifications</div>
-            @foreach (array_slice($fakers, 0, 5) as $fakerKey => $faker)
-                <div @class([
-                    'cursor-pointer relative flex items-center',
-                    'mt-5' => $fakerKey,
-                ])>
+            @forelse ($activities as $activity)
+                <div class="relative flex items-center mt-3">
                     <div class="image-fit relative mr-1 h-12 w-12 flex-none">
                         <img
                             class="rounded-full"
-                            src="{{ Vite::asset($faker['photos'][0]) }}"
+                            src="{{ Vite::asset('resources/images/fakers/profile-1.jpg') }}"
                             alt="Tailwind Admin Dashboard Template"
                         />
                         <div
@@ -161,22 +158,21 @@
                     </div>
                     <div class="ml-2 overflow-hidden">
                         <div class="flex items-center">
-                            <a
-                                class="mr-5 truncate font-medium"
-                                href=""
-                            >
-                                {{ $faker['users'][0]['name'] }}
+                            <a class="mr-5 truncate font-medium" href="#">
+                                {{ $activity->action }}
                             </a>
                             <div class="ml-auto whitespace-nowrap text-xs text-slate-400">
-                                {{ $faker['times'][0] }}
+                                {{ $activity->created_at->diffForHumans() }}
                             </div>
                         </div>
                         <div class="mt-0.5 w-full truncate text-slate-500">
-                            {{ $faker['news'][0]['short_content'] }}
+                            {{ $activity->details['description'] ?? 'No details available' }}
                         </div>
                     </div>
                 </div>
-            @endforeach
+            @empty
+                <p class="text-sm text-slate-500 text-center">No recent activities</p>
+                @endforelse
         </x-base.popover.panel>
     </x-base.popover>
     <!-- END: Notifications  -->
