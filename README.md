@@ -63,7 +63,7 @@ The **Digital Services Survey** is a government feedback platform that enables p
 - 📄 [Roles & Permissions](docs/roles-permissions.md)
 - 📄 [Survey Management](docs/survey-management.md)
 - 📄 [Toast Notifications](docs/toast-notifications.md)
-- 📄 [Database Documentation](docs/database-documentation.md)
+- 📄 [Database Documentation](docs/database.md)
 - 📄 [Contribution Guidelines](docs/contribution.md)
 
 ---
