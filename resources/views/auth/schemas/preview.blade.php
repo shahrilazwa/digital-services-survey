@@ -75,7 +75,7 @@
                     name="btn-schema-manage"
                     class="h-10 w-10 rounded-full" 
                     :variant="$schema->hasCompletedStep('Schema Manage') ? 'success' : 'secondary'"
-                    data-redirect=""
+                    data-redirect="{{ route('schemas.manage', ['schema' => $schema->id]) }}"
                     data-step="Schema Preview"                
                 >
                     5
@@ -110,10 +110,10 @@
                 id="nextButton"
                 class="ml-2 w-24"
                 variant="primary"
-                data-redirect="{{ route('schemas.index') }}"
+                data-redirect="{{ route('schemas.manage', ['schema' => $schema->id]) }}"
                 data-step="Schema Preview"
             >
-                Done
+                Next
             </x-base.button>
         </div>
         <!-- END: Buttons -->        

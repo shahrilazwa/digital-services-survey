@@ -1,9 +1,14 @@
 // Load static files
-import.meta.glob(["../images/**"]);
+try {
+    import.meta.glob(["../images/**"]);
+} catch (error) {
+    console.warn("Vite glob import may not be processed correctly by some tools:", error);
+}
 import { createApp } from 'vue';
 import SurveyCreator from './components/vue/SurveyCreator.vue';
 import SchemaViewer from './components/vue/SchemaViewer.vue';
 import SurveyComponent from './components/vue/SurveyComponent.vue';
+import SurveyResultsTable from "./components/vue/SurveyResultsTable.vue";
 import axios from 'axios';
 
 // Configure Axios with CSRF token
@@ -39,4 +44,10 @@ if (surveyFormElement) {
     surveyApp.component('SurveyComponent', SurveyComponent); // Register globally if needed
     surveyApp.mount('#survey-form-app');
     console.log("Vue app mounted successfully.");
+}
+
+// Mount SurveyResultsTable if element exists
+const surveyResultsElement = document.getElementById("survey-results-app");
+if (surveyResultsElement) {
+  createApp(SurveyResultsTable).mount("#survey-results-app");
 }

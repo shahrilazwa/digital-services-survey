@@ -27,22 +27,25 @@
                                 class="mt-5 flex-col items-start pt-5 first:mt-0 first:pt-0 xl:flex-row"
                                 formInline
                             >
-                                <x-base.form-label class="xl:!mr-10 xl:w-64">
+                                <x-base.form-label class="xl:!mr-10 xl:w-64" for="perm-name">
                                     <div class="text-left">
                                         <div class="flex items-center">
-                                            <div class="font-medium">Permission Name</div>
+                                            <div class="font-medium">Name</div>
                                             <div
                                                 class="ml-2 rounded-md bg-slate-200 px-2 py-0.5 text-xs text-slate-600 dark:bg-darkmode-300 dark:text-slate-400">
                                                 Required
                                             </div>
                                         </div>
+                                        <div class="mt-3 text-xs leading-relaxed text-slate-500">
+                                            Enter a unique name for the permission (e.g., "view users", "delete surveys").
+                                        </div> 
                                     </div>
                                 </x-base.form-label>
                                 <div class="mt-3 w-full flex-1 xl:mt-0">
                                     <div class="input-form">
                                         <x-base.form-input
-                                            id="permission-name"
-                                            name="permission-name"
+                                            id="perm-name"
+                                            name="perm-name"
                                             type="text"
                                             placeholder="Permission name"
                                             minlength="5"
@@ -50,6 +53,59 @@
                                         />
                                         <x-base.form-help class="text-right"> Maximum character 0/70 </x-base.form-help>
                                     </div>
+                                </div>                               
+                            </x-base.form-inline>
+
+                            <x-base.form-inline
+                                class="mt-2 flex-col items-start pt-5 first:mt-0 first:pt-0 xl:flex-row"
+                                formInline
+                            >
+                                <x-base.form-label class="xl:!mr-10 xl:w-64" for="perm-group">
+                                    <div class="text-left">
+                                        <div class="flex items-center">
+                                            <div class="font-medium">Group</div>
+                                        </div>
+                                        <div class="mt-3 text-xs leading-relaxed text-slate-500">
+                                            Enter a category for grouping related permissions (e.g., "Users", "Surveys").
+                                        </div>                                        
+                                    </div>
+                                </x-base.form-label>
+                                <div class="mt-3 w-full flex-1 xl:mt-0">
+                                    <div class="input-form">
+                                        <x-base.form-input
+                                            id="perm-group"
+                                            name="perm-group"
+                                            type="text"
+                                            placeholder="Group name (e.g., Users, Surveys)"
+                                            minlength="5"
+                                            required
+                                        />
+                                        <x-base.form-help class="text-right"> Maximum character 0/70 </x-base.form-help>
+                                    </div>
+                                </div>
+                            </x-base.form-inline>
+
+                            <x-base.form-inline
+                                class="mt-2 flex-col items-start pt-5 first:mt-0 first:pt-0 xl:flex-row"
+                                formInline
+                            >
+                                <x-base.form-label class="xl:!mr-10 xl:w-64" for="perm-desc">
+                                    <div class="text-left">
+                                        <div class="flex items-center">
+                                            <div class="font-medium">Description</div>
+                                        </div>
+                                        <div class="mt-3 text-xs leading-relaxed text-slate-500">
+                                            Provide a detailed explanation of the permission.
+                                        </div>                                        
+                                    </div>
+                                </x-base.form-label>
+                                
+                                <div class="mt-3 w-full flex-1 xl:mt-0">
+                                    <x-base.form-textarea
+                                        id="perm-desc" 
+                                        name="perm-desc" 
+                                        placeholder="Brief description of permission"
+                                    ></x-base.form-textarea>
                                 </div>
                             </x-base.form-inline>
                         </div>
@@ -86,5 +142,11 @@
 @endPushOnce
 
 @pushOnce('scripts')
+    <script>
+        window.routes = {
+            permissionsIndex: @json(route('permissions.index'))
+        };
+    </script>
+    
     @vite('resources/js/pages/createPermission.js')
 @endPushOnce

@@ -66,20 +66,20 @@
                             <x-base.table.td class="box w-10 rounded-l-none rounded-r-none border-x-0 shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600">
                                 {{ $loop->iteration + ($schemas->currentPage() - 1) * $schemas->perPage() }}
                             </x-base.table.td>
-                            <x-base.table.td class="box w-10 rounded-l-none rounded-r-none border-x-0 shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600">
+                            <x-base.table.td class="box w-30 rounded-l-none rounded-r-none border-x-0 shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600">
                                 <div class="flex items-center">
-                                    <a class="whitespace-nowrap font-medium" href="">
+                                    <a class="whitespace-normal break-words font-medium" href="">
                                         {{ $schema->title ?? 'N/A' }}
                                     </a>
                                 </div>                               
                             </x-base.table.td>
                             <x-base.table.td class="box w-10 rounded-l-none rounded-r-none border-x-0 shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600">
                                 <span @class([
-                                    'mr-1 rounded-full px-2 py-1 text-white text-xs',
+                                    'mr-1 rounded-full px-2 py-1 text-white text-xs whitespace-nowrap',
                                     'bg-warning' => $schema->status === 'Draft',
                                     'bg-success' => $schema->status === 'Available',
                                     'bg-danger'  => $schema->status === 'In-Use',
-                                    'bg-gray-500' => $schema->status === 'Closed',
+                                    'bg-gray-500' => $schema->status === 'Archived',
                                 ])>
                                     {{ $schema->status ?? 'N/A' }}
                                 </span>
@@ -90,7 +90,7 @@
                             ])>
                                 <div class="flex items-center justify-center">
                                     @can('view survey schema')
-                                        <a class="mr-3 flex items-center text-primary view-schema"
+                                        <a class="mr-3 flex items-center text-success view-schema"
                                             data-tw-toggle="modal" 
                                             data-tw-target="#slide-over-details"
                                             data-schema-id="{{ $schema->id }}"
@@ -101,7 +101,9 @@
                                         </a>                                        
                                     @endcan                                    
                                     @can('update survey schema')
-                                        <a class="mr-3 flex items-center text-slate-500" href="{{ route('schemas.edit', $schema->id) }}">
+                                        <a class="mr-3 flex items-center text-warning" 
+                                            href="{{ route('schemas.edit', $schema->id) }}"
+                                        >
                                             <x-base.lucide class="mr-1 h-4 w-4" icon="checkSquare" />
                                             Edit
                                         </a>                                        

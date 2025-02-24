@@ -17,8 +17,8 @@
                 <x-base.button
                     name="btn-schema-update"
                     class="h-10 w-10 rounded-full"
-                    variant="primary"
-                    data-redirect=""
+                    :variant="$schema->hasCompletedStep('Schema Details') ? 'success' : 'secondary'"
+                    data-redirect="{{ route('schemas.edit', ['schema' => $schema->id]) }}"
                     data-step="Schema Details"
                 >
                     1
@@ -73,7 +73,7 @@
                 <x-base.button 
                     name="btn-schema-manage"
                     class="h-10 w-10 rounded-full" 
-                    :variant="$schema->hasCompletedStep('Schema Manage') ? 'success' : 'secondary'"
+                    variant="primary"
                     data-redirect="{{ route('schemas.manage', $schema->id) }}"
                     data-step="Schema Manage"                
                 >
@@ -89,64 +89,43 @@
         <div class="mt-5 border-t border-slate-200/60 px-5 pt-5 dark:border-darkmode-400 sm:px-20">
             <div class="flex items-center border-b border-slate-200/60 pb-5 text-base font-medium dark:border-darkmode-400">
                 <x-base.lucide class="mr-2 h-4 w-4" icon="ChevronDown" />
-                Schema Details
+                Manage Schema
             </div>
+
             <form class="validate-form">
                 @csrf
                 <input type="hidden" name="schema-id" value="{{ $schema->id }}">
 
-                <!-- BEGIN: Schema Title Input -->
+                <!-- BEGIN: Schema Status Input -->
                 <x-base.form-inline class="mt-5 flex-col items-start pt-5 first:mt-0 first:pt-0 xl:flex-row" formInline>
                     <x-base.form-label for="survey-title" class="xl:!mr-10 xl:w-64">
                         <div class="text-left">
                             <div class="flex items-center">
-                                <div class="font-medium">Title</div>
+                                <div class="font-medium">Schema Status</div>
                                 <div class="ml-2 rounded-md bg-slate-200 px-2 py-0.5 text-xs text-slate-600 dark:bg-darkmode-300 dark:text-slate-400">
                                     Required
                                 </div>
                             </div>
                             <div class="mt-3 text-xs leading-relaxed text-slate-500">
-                                Enter the title of the survey schema.
+                                Select the current status of this schema.
                             </div>
                         </div>
                     </x-base.form-label>
                     <div class="mt-2 w-full flex-1 xl:mt-0">
                         <div class="input-form">
-                            <x-base.form-input
-                                id="schema-title"
-                                name="schema-title"
-                                type="text"
-                                value="{{ $schema->title }}"
-                                placeholder="Schema title"
-                                required
-                            />
+                            <x-base.form-select 
+                                name="status"
+                            >
+                                @foreach ($statusOptions as $value => $label)
+                                    <option value="{{ $value }}" {{ $schema->status === $value ? 'selected' : '' }}>
+                                        {{ $label }}
+                                    </option>
+                                @endforeach                            
+                            </x-base.form-select>
                         </div>
                     </div>
                 </x-base.form-inline>
-                <!-- END: Schema Title Input -->
-
-                <!-- BEGIN: Schema Description Input -->
-                <x-base.form-inline class="mt-5 flex-col items-start pt-5 first:mt-0 first:pt-0 xl:flex-row" formInline>
-                    <x-base.form-label for="schema-desc" class="xl:!mr-10 xl:w-64">
-                        <div class="text-left">
-                            <div class="flex items-center">
-                                <div class="font-medium">Description</div>
-                            </div>
-                            <div class="mt-3 text-xs leading-relaxed text-slate-500">
-                                Provide a concise description of the schema.
-                            </div>
-                        </div>
-                    </x-base.form-label>
-                    <div class="mt-2 w-full flex-1 xl:mt-0">
-                        <x-base.form-textarea
-                            id="schema-desc"
-                            name="schema-desc"
-                            rows="5"
-                            placeholder="Enter schema description"
-                        >{{ old('schema-desc', $schema->description) }}</x-base.form-textarea>
-                    </div>
-                </x-base.form-inline>
-                <!-- END: Schema Description Input -->
+                <!-- END: Schema Status Input -->                
 
                 <!-- BEGIN: Buttons -->
                 <div class="intro-y col-span-12 mt-5 flex items-center justify-center sm:justify-end">
@@ -156,19 +135,19 @@
                         as="a"
                         href="{{ route('schemas.index') }}"
                     >
-                        Cancel
+                        Previous
                     </x-base.button>
                     <x-base.button
                         class="ml-2 w-24"
                         variant="primary"
                         type="submit"
-                        data-redirect="{{ route('schemas.createSchema', ['schema' => $schema->id]) }}"
-                        data-step="Schema Details"
+                        data-redirect="{{ route('schemas.index', ['schema' => $schema->id]) }}"
+                        data-step="Schema Status"
                     >
-                        Next
+                        Complete
                     </x-base.button>
                 </div>
-                <!-- END: Buttons -->
+                <!-- END: Buttons -->                
             </form>
         </div>
     </div>
@@ -181,5 +160,5 @@
 @endPushOnce
 
 @pushOnce('scripts')
-    @vite('resources/js/pages/editSchema.js')
+    @vite('resources/js/pages/manageSchema.js')
 @endPushOnce

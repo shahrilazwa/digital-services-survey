@@ -13,7 +13,7 @@
     <div class="intro-y box mt-5 py-10 sm:py-5">
         <!-- BEGIN: Wizard Layout -->
         <div class="relative flex flex-col justify-center px-5 before:absolute before:bottom-0 before:top-0 before:mt-4 before:hidden before:h-[3px] before:w-[69%] before:bg-slate-100 before:dark:bg-darkmode-400 sm:px-20 lg:flex-row before:lg:block">
-            <div class="intro-x z-10 flex flex-1 items-center lg:block lg:text-center">
+             <div class="intro-x z-10 mt-5 flex flex-1 items-center lg:mt-0 lg:block lg:text-center">
                 <x-base.button
                     name="btn-schema-edit" 
                     class="h-10 w-10 rounded-full"
@@ -69,12 +69,12 @@
                     Preview
                 </div>
             </div>
-            <div class="intro-x z-10 mt-5 flex flex-1 items-center lg:mt-0 lg:block lg:text-center">
+            <div class="intro-x z-10 flex flex-1 items-center lg:block lg:text-center">
                 <x-base.button 
                     name="btn-schema-manage"
                     class="h-10 w-10 rounded-full" 
                     :variant="$schema->hasCompletedStep('Schema Manage') ? 'success' : 'secondary'"
-                    data-redirect=""
+                    data-redirect="{{ route('schemas.manage', ['schema' => $schema->id]) }}"
                     data-step="Schema Design"                
                 >
                     5

@@ -69,7 +69,12 @@ class SideMenu
                         'icon' => 'send',
                         'route_name' => 'publish-surveys.index',
                         'title' => 'Publish Survey'
-                    ]                    
+                    ],
+                    'survey-results' => [
+                        'icon' => 'send',
+                        'route_name' => 'survey-results.index',
+                        'title' => 'Survey Results'
+                    ]                                        
                 ]                
             ]            
         ];

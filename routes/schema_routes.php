@@ -17,6 +17,9 @@ Route::post('schemas/{schema}/team/update', [SchemaController::class, 'updateTea
 Route::get('schemas/{schema}/preview', [SchemaController::class, 'previewSchema'])->name('schemas.previewSchema');
 Route::post('schemas/{schema}/update-step', [SchemaController::class, 'updateStep'])->name('schemas.updateStep');
 
-
 Route::get('schemas/{schema}/data', [SchemaController::class, 'getSurveyData'])->name('schemas.getData');
+
+Route::get('schemas/{schema}/manage', [SchemaController::class, 'manageSchema'])->name('schemas.manage');
+Route::post('schemas/{schema}/update-status', [SchemaController::class, 'updateStatus'])->name('schemas.updateStatus');
+
 Route::resource('schemas', SchemaController::class);

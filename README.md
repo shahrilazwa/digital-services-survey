@@ -1,61 +1,112 @@
-# Survey Management System
+# Digital Services Survey
 
 ## Overview
-This project is a **Survey Management System** built using Laravel. It allows users to create, manage, and analyze survey schemas and responses efficiently. The system supports multiple user roles and permissions, ensuring secure access control.
 
-## Features
-- **Survey Schema Management**: Create, update, and manage survey schemas.
-- **Survey Responses**: Collect and analyze survey responses.
-- **Role-Based Access Control (RBAC)**: Uses **Spatie Laravel Permission** to manage roles and permissions.
-- **User Authentication & Security**: Implemented using **Laravel Fortify** for secure login, registration, and authentication.
-- **SurveyJS Integration**: Provides a seamless experience for designing and displaying surveys.
-- **Export Features**: Supports CSV and Excel export for survey results.
-- **Pagination & Search**: Easy navigation through survey lists.
-- **Dynamic UI**: Interactive UI components powered by TailwindCSS and Vue.js.
+The **Digital Services Survey** is a government feedback platform that enables public agencies to create, manage, and analyze surveys related to digital services. This system streamlines data collection, analysis, and reporting for enhanced decision-making.
 
-## Technologies Used
-- **Laravel** - PHP Framework
-- **Spatie Laravel Permission** - Role and Permission Management
-- **Laravel Fortify** - Authentication and Security
-- **SurveyJS** - Survey Builder and Viewer
-- **Vue.js** - Frontend Interactivity
-- **TailwindCSS** - UI Styling
-- **MySQL** - Database Management
+### Key Features
 
-## Installation
-1. Clone the repository:
+- ✅ **Survey Management**: Create, edit, and publish surveys
+- ✅ **Survey Responses & Analytics**: Collect structured & unstructured feedback
+- ✅ **Security & Access Control**: Role-Based Access Control (RBAC) using Spatie Laravel Permission
+- ✅ **Audit Trails & Activity Logging**: Logs all user actions for transparency
+- ✅ **Modern UI & Notifications**: Built with Vue.js, TailwindCSS, and SurveyJS
+
+### Technology Stack
+
+- **Laravel** (Backend)
+- **Vue.js** (Frontend)
+- **MySQL** (Database)
+- **SurveyJS** (Survey management)
+- **Spatie Laravel Permission** (RBAC)
+- **Laravel Fortify** (Authentication)
+- **Vite** (Frontend asset bundling)
+
+---
+
+## Installation Guide ([Full Guide](docs/installation-guide.md))
+
+1. **Clone the repository**
    ```sh
-   git clone https://github.com/your-repo/survey-management.git
-   cd survey-management
+   git clone https://github.com/shahrilazwa/digital-services-survey.git
+   cd digital-services-survey
    ```
-2. Install dependencies:
+2. **Install dependencies**
    ```sh
    composer install
    npm install
    ```
-3. Copy the environment file and set up the database:
+3. **Configure `.env` file**
    ```sh
    cp .env.example .env
    php artisan key:generate
    ```
-4. Configure `.env` file with database and mail settings.
-5. Run migrations and seeders:
+4. **Run migrations and seed database**
    ```sh
    php artisan migrate --seed
    ```
-6. Start the development server:
+5. **Start the development server**
    ```sh
    php artisan serve
+   npm run dev
    ```
 
-## Usage
-- Log in as an administrator to manage surveys.
-- Create, edit, and publish survey schemas.
-- Assign roles and permissions using Spatie.
-- Analyze survey responses and export reports.
+---
 
-## Contribution
-Feel free to submit issues and pull requests to enhance the system.
+## Documentation
+
+- 📄 [Activity Notifications](docs/activity-notifications.md)
+- 📄 [Audit Trails](docs/audit-trails.md)
+- 📄 [Create New Form](docs/create-new-form.md)
+- 📄 [Create New Page](docs/create-new-page.md)
+- 📄 [Form Validation](docs/form-validation.md)
+- 📄 [Roles & Permissions](docs/roles-permissions.md)
+- 📄 [Survey Management](docs/survey-management.md)
+- 📄 [Toast Notifications](docs/toast-notifications.md)
+- 📄 [Database Documentation](docs/database.md)
+- 📄 [Contribution Guidelines](docs/contribution.md)
+
+---
+
+## Contribution Guidelines ([Full Guide](docs/contribution.md))
+
+We welcome contributions! Follow these steps:
+
+### How to Contribute
+
+1. **Fork the Repository**: Click the `Fork` button on GitHub to create your own copy.
+2. **Clone Your Fork**: Download your forked repository to your local machine.
+   ```sh
+   git clone https://github.com/your-username/digital-services-survey.git
+   cd digital-services-survey
+   ```
+3. **Create a New Branch**: Work on a new feature or bug fix in a separate branch.
+   ```sh
+   git checkout -b feature-branch-name
+   ```
+4. **Make Your Changes**: Modify the code, documentation, or tests as needed.
+5. **Commit and Push**: Save your changes and push them to GitHub.
+   ```sh
+   git add .
+   git commit -m "Describe your changes"
+   git push origin feature-branch-name
+   ```
+6. **Submit a Pull Request (PR)**: Go to your forked repository on GitHub and click `New Pull Request`.
+
+### Code Style Guidelines
+
+- Follow the Laravel and Vue.js best practices.
+- Write clear and descriptive commit messages.
+- Ensure your changes do not break existing functionality.
+
+### Reporting Issues
+
+If you find a bug or have a feature request, create an issue [here](https://github.com/shahrilazwa/digital-services-survey/issues).
+
+---
 
 ## License
-This project is licensed under the MIT License.
+
+This project is licensed under the **MIT License**.
+
+**GitHub Repository**: [Digital Services Survey](https://github.com/shahrilazwa/digital-services-survey)

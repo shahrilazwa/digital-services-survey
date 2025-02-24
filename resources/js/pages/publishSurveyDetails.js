@@ -16,12 +16,12 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
 
             const surveyId = button.getAttribute('data-survey-id');
-
+            console.log(`Survey Id: ${surveyId}`);
             // Fetch survey details
             try {
                 const response = await axios.get(`/publish-surveys/${surveyId}`);
                 const survey = response.data;
-
+                console.log('Response data:', response.data);
                 // Populate slide-over with survey details
                 slideOverTitle.textContent = survey.title || 'No Title Available';
                 slideOverDescription.innerHTML = `
