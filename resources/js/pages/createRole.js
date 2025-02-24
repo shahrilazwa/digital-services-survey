@@ -15,8 +15,8 @@
             axios.post('/roles', formData)
             .then(function (response) {
                 if (response.status === 200 || response.status === 201) {
-                    console.log(response.message);
-                    window.location.href = '/roles';
+                    console.log(response.data.message);
+                    window.location.href = `${window.routes.rolesIndex}?success=Role '${formData.name}' created successfully.`;
                 }
             })
             .catch(function (error) {
@@ -29,6 +29,7 @@
                 } else {
                     console.error('An error occurred:', error.response ? error.response.data : error.message);
                 }
+                window.location.href = `${window.routes.rolesIndex}?error=Failed to create permission '${formData.name}'.`;
             });
         }
     }

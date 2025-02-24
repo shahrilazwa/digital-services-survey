@@ -5,6 +5,7 @@
 @endsection
 
 @section('subcontent')
+    {{-- @dump(session()->all()) --}}
     <div class="intro-y mt-8 flex items-center">
         <h2 class="mr-auto text-lg font-medium">Add Role</h2>
     </div>
@@ -102,5 +103,11 @@
 @endPushOnce
 
 @pushOnce('scripts')
+    <script>
+        window.routes = {
+            rolesIndex: @json(route('roles.index'))
+        };
+    </script>
+
     @vite('resources/js/pages/createRole.js')
 @endPushOnce

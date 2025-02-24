@@ -194,7 +194,7 @@
     </x-base.notification>
     <!-- END: Delete Confirmation Content -->
 
-    @foreach (['success', 'error'] as $type)
+    @foreach (['success', 'error', 'info'] as $type)
         @if (session($type))
             <div id="{{ $type }}-message" data-message="{{ session($type) }}"></div>
         @endif
@@ -219,6 +219,25 @@
     </x-base.notification>
     <!-- END: Success Notification Content -->
 
+    <!-- BEGIN: Info Notification Content -->
+    <x-base.notification
+        class="flex"
+        id="info-notification-content"
+        data-message="{{ session('info') }}"
+    >
+        <x-base.lucide
+            class="text-info"
+            icon="Info"
+        />
+        <div class="ml-4 mr-4">
+            <div class="font-medium">Info</div>
+            <div class="mt-1 text-slate-500">
+                {{ session('info') }}
+            </div>
+        </div>
+    </x-base.notification>    
+    <!-- END: Info Notification Content -->
+
     <!-- BEGIN: Error Notification Content -->
     <x-base.notification
         class="flex"
@@ -241,6 +260,7 @@
 
 @pushOnce('vendors')
     @vite('resources/js/vendors/axios.js')
+    @vite('resources/js/vendors/toastify.js')
 @endPushOnce
 
 @pushOnce('scripts')

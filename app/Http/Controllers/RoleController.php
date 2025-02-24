@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Permission;
+use App\Helpers\ActivityLogger;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class RoleController extends Controller
 {
@@ -28,13 +32,18 @@ class RoleController extends Controller
         $roles = Role::query();
 
         if ($search) {
-            // Filter roles by the search term in the 'name' column
             $roles->where('name', 'like', '%' . $search . '%');
+        }
+
+        foreach (['success', 'error'] as $type) {
+            if ($request->has($type)) {
+                session()->flash($type, $request->get($type));
+            }
         }
 
         $roles = $roles->paginate($perPage)->appends(['search' => $search, 'per_page' => $perPage]);          
 
-        return view('auth.admin.roles.index', compact('roles', 'breadcrumbs', 'perPage', 'search'));
+        return view('auth.admin.roles.index', compact('breadcrumbs', 'roles', 'perPage', 'search'));
     }
 
     public function create()
@@ -49,16 +58,48 @@ class RoleController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name'=>['required','string','min:6','unique:roles,name']
-        ], [
-            'name.required' => 'The role name is required.',
-            'name.string' => 'The role name must be a valid string.',
-            'name.min' => 'The role name must be at least 6 characters.',
-            'name.unique' => 'The role name has already been taken. Please choose another name.',
-        ]);
-        Role::create(['name'=>$request->name]);
-        return response()->json(['message'=>'Role created successfully.'], 201); 
+        try {
+            $request->validate([
+                'name'=>['required','string','min:6','unique:roles,name'],
+                'description' => ['nullable', 'string', 'max:500']
+            ], [
+                'name.required' => 'The role name is required.',
+                'name.string' => 'The role name must be a valid string.',
+                'name.min' => 'The role name must be at least 6 characters.',
+                'name.unique' => 'The role name has already been taken. Please choose another name.',
+            ]);
+
+            $userId = Auth::check() ? Auth::id() : 0;
+
+            $role = Role::create([
+                'name'=>$request->name,
+                'description' => $request->description,
+                'created_by' => $userId,
+            ]);
+
+            ActivityLogger::log('Role Created', 'Role', $role->id, [
+                'title' => 'Role Created',
+                'description' => $role->name . ' role created by ' . (Auth::check() ? Auth::user()->name : 'System'),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Role created.', 
+                'details' => $request->title,
+                'id' => $request->id,
+            ], 201);
+        } catch (Exception $e) {
+            // Log the detailed error
+            Log::error('Role creation failed:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'data' => $request->all(),
+            ]);
+
+            return redirect()->route('role.index', [
+                'error' => "Failed to create {$request->name} role."
+            ]);            
+        }            
     }
 
     /**
@@ -82,23 +123,79 @@ class RoleController extends Controller
 
     public function update(Request $request, Role $role)
     {
-        $request->validate(['name' => ['required', 'string', 'min:6', 'unique:roles,name,' . $request->id]], 
-        [
-            'name.required' => 'The role name is required.',
-            'name.string' => 'The role name must be a valid string.',
-            'name.min' => 'The role name must be at least 6 characters.',
-            'name.unique' => 'The role name has already been taken. Please choose another name.',
-        ]);
-        $role->update(['name' => $request->name]);
-        return response()->json(['message' => 'Permission updated successfully.'], 200);        
+        // Force an error for testing purposes
+        // throw new Exception("This is a test error for the error notification.");
+        try {
+            $request->validate([
+                'name' => ['required', 'string', 'min:6', 'unique:roles,name,' . $request->id],
+                'description' => ['nullable', 'string', 'max:500']
+            ], 
+            [
+                'name.required' => 'The role name is required.',
+                'name.string' => 'The role name must be a valid string.',
+                'name.min' => 'The role name must be at least 6 characters.',
+                'name.unique' => 'The role name has already been taken. Please choose another name.',
+                'description.string' => 'The description must be a valid string.',
+                'description.max' => 'The description cannot exceed 500 characters.'            
+            ]);
+
+            $userId = Auth::check() ? Auth::id() : 0; // Fallback to 0 if no user is authenticated
+
+            $role->update([
+                'name' => $request->name,
+                'description' => $request->description,
+                'updated_by' => $userId,
+            ]); 
+
+            ActivityLogger::log('Role Updated', 'Role', $request->id, [
+                'title' => 'Role Updated',
+                'description' => $request->name . ' role updated by ' . (Auth::check() ? Auth::user()->name : 'System'),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Role updated.', 
+                'details' => $request->title,
+                'id' => $request->id,
+            ], 201);
+        } catch (Exception $e) {
+            // Log the detailed error
+            Log::error('Role update failed:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'permission_id' => $role->id
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => "Failed to update role {$request->name}.",
+                'error' => $e->getMessage(),
+            ], 500);
+        }                  
     }
 
     public function destroy(string $id)
     {
-        
-        $role = Role::findById($id);
-        $role->delete();
-        return redirect('roles')->with('status', 'Role Deleted Successfully');
+        try {
+            $role = Role::findById($id);
+            $roleName = $role->name;
+            $role->delete();
+
+            ActivityLogger::log('Role Deleted', 'Role', $role->id, [
+                'title' => 'Role Deleted',
+                'description' => $roleName . ' role deleted by ' . (Auth::check() ? Auth::user()->name : 'System'),
+            ]);      
+
+            return redirect()->route('roles.index')->with('success', "Role {$roleName} deleted successfully.");
+        } catch (Exception $e) {
+            Log::error('Role delete failed:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'role_id' => $id
+            ]);
+
+            return redirect()->route('roles.index')->with('error', 'Failed to delete role.');
+        }
     }
 
     public function addPermisssionToRole(Request $request, $roleId)

@@ -6,7 +6,6 @@
         let valid = pristine.validate();
 
         if (valid) {
-            
             let formData = {
                 id: getInputValue(form, 'input[name="perm-id"]'),
                 name: getInputValue(form, 'input[name="perm-name"]'),
@@ -18,7 +17,11 @@
             .then(function (response) {
                 if (response.status === 200 || response.status === 201) {
                     console.log(response.data.message);
-                    window.location.href = `${window.routes.permissionsIndex}?success=Permission '${formData.name}' updated successfully.`;
+
+                    // Use 'success' for updates, 'info' for no changes
+                    let messageType = response.data.success ? "success" : "info";
+                    console.log(`${window.routes.permissionsIndex}?${messageType}=${encodeURIComponent(response.data.message)}`);
+                    window.location.href = `${window.routes.permissionsIndex}?${messageType}=${encodeURIComponent(response.data.message)}`;
                 }
             })
             .catch(function (error) {
@@ -33,7 +36,6 @@
                 }
                 window.location.href = `${window.routes.permissionsIndex}?error=Failed to update permission '${formData.name}'.`;
             });
-        
         }
     }
 

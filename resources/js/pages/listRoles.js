@@ -49,9 +49,6 @@
     // Show and clear success notification
     showToastAndClearSession("success", "success-message", "success-notification-content");
 
-    // Show and clear info notification
-    showToastAndClearSession("info", "info-message", "info-notification-content");   
-
     // Show and clear error notification
     showToastAndClearSession("error", "error-message", "error-notification-content");
 })();

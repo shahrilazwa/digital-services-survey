@@ -34,7 +34,7 @@ class PermissionController extends Controller
             $permissions->where('name', 'like', '%' . $search . '%');
         }
     
-        foreach (['success', 'error'] as $type) {
+        foreach (['success', 'error', 'info'] as $type) {
             if ($request->has($type)) {
                 session()->flash($type, $request->get($type));
             }
@@ -42,12 +42,12 @@ class PermissionController extends Controller
     
         $permissions = $permissions->paginate($perPage)->appends(['search' => $search, 'per_page' => $perPage]);        
     
-        return view('auth.admin.permissions.index', [
-            'breadcrumbs' => $breadcrumbs,
-            'permissions' => $permissions,
-            'perPage' => $perPage,
-            'search' => $search,
-        ]);
+        return view('auth.admin.permissions.index', compact(
+            'breadcrumbs',
+            'permissions',
+            'perPage',
+            'search',
+        ));
     }
 
     public function create()
@@ -138,50 +138,62 @@ class PermissionController extends Controller
                 'name' => ['required', 'string', 'min:6', 'unique:permissions,name,' . $permission->id],
                 'group' => ['required', 'string', 'max:255'],
                 'description' => ['nullable', 'string', 'max:500']
-            ], [
-                'name.required' => 'The permission name is required.',
-                'name.string' => 'The permission name must be a valid string.',
-                'name.min' => 'The permission name must be at least 6 characters.',
-                'name.unique' => 'The permission name has already been taken. Please choose another name.',
-                'group.string' => 'The permission group must be a valid string.',
-                'description.string' => 'The description must be a valid string.',
-                'description.max' => 'The description cannot exceed 500 characters.'
             ]);
-
+    
             $userId = Auth::check() ? Auth::id() : 0; // Fallback to 0 if no user is authenticated
-
+    
+            // Compare each field manually to detect changes
+            $hasChanges = false;
+            if (
+                $permission->name !== $request->name ||
+                $permission->group !== $request->group ||
+                $permission->description !== $request->description
+            ) {
+                $hasChanges = true;
+            }
+    
+            // If no changes were detected, return info response
+            if (!$hasChanges) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "No changes detected. Permission '{$request->name}' was not updated.",
+                    'details' => $request->name,
+                    'id' => $request->id,                    
+                ], 200);
+            }
+    
+            // Update only if changes are detected
             $permission->update([
                 'name' => $request->name,
                 'group' => $request->group,
                 'description' => $request->description,
                 'updated_by' => $userId,
             ]);
-
+    
             ActivityLogger::log('Permission Updated', 'Permission', $request->id, [
                 'title' => 'Permission Updated',
                 'description' => $request->name . ' permission updated by ' . (Auth::check() ? Auth::user()->name : 'System'),
             ]);        
-
+    
             return response()->json([
                 'success' => true,
-                'message' => 'Permission updated.', 
-                'details' => $request->title,
+                'message' => "Permission '{$request->name}' updated successfully.",
+                'details' => $request->name,
                 'id' => $request->id,
             ], 201);
         } catch (Exception $e) {
-            // Log the detailed error
             Log::error('Permission update failed:', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'permission_id' => $permission->id
             ]);
-
+    
             return response()->json([
                 'success' => false,
-                'message' => "Failed to update permission {$request->name}.",
+                'message' => "Failed to update permission '{$request->name}'.",
                 'error' => $e->getMessage(),
             ], 500);
-        }            
+        }           
     }
 
     public function destroy(string $id)
@@ -198,14 +210,13 @@ class PermissionController extends Controller
 
             return redirect()->route('permissions.index')->with('success', "Permission {$permissionName} deleted successfully.");
         } catch (Exception $e) {
-            // Log the detailed error
             Log::error('Permission delete failed:', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'permission_id' => $id
             ]);
 
-            return redirect()->route('schemas.index')->with('error', 'Failed to delete permission.');
+            return redirect()->route('permissions.index')->with('error', 'Failed to delete permission.');
         }            
     }
 }
