@@ -1,4 +1,4 @@
-# 📜 **Creating a New Page in Digital Services Survey System**
+# 📜 **Creating a New Page**
 
 ## **Introduction**
 The **Digital Services Survey System** follows a structured approach when adding new pages to ensure **code maintainability**, **consistency**, and **modular development**.
