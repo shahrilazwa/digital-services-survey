@@ -12,35 +12,43 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        $roleAdmin = Role::where('name', 'admin')->first();
-        $roleDefault = Role::where('name', 'default')->first();
-        $roleSuperAdmin = Role::where('name', 'super-admin')->first();
+        // Fetch available roles
+        $roles = [
+            'Survey Admin' => 'admin@example.com',
+            'Survey Manager' => 'manager@example.com',
+            'Survey Designer' => 'designer@example.com',
+            'Survey Reviewer' => 'reviewer@example.com',
+            'Survey Publisher' => 'publisher@example.com',
+            'Survey Operator' => 'operator@example.com',
+            'Data Analyst' => 'analyst@example.com',
+            'Super Admin' => 'superadmin@example.com',
+        ];
 
-        $orgDigital = Organization::where('org_name', 'Ministry of Digital')->first();
+        // Get agency and organization data
         $agencyJDN = Agency::where('abbreviation', 'JDN')->first();
+        $orgDigital = Organization::where('org_name', 'Ministry of Digital')->first();
 
-        $userAdmin = User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@example.com',
-            'password' => bcrypt('password'),
-            'agency_id' => $agencyJDN->id,
-        ]);
-        $userAdmin->assignRole($roleAdmin);
+        // Loop through roles and create users
+        foreach ($roles as $roleName => $email) {
+            $role = Role::where('name', $roleName)->first();
 
-        $userDefault = User::factory()->create([
-            'name' => 'Default User',
-            'email' => 'tester@example.com',
-            'password' => bcrypt('password'),
-            'org_id' => $orgDigital->id,
-        ]);
-        $userDefault->assignRole($roleDefault);
+            if (!$role) {
+                continue; // Skip if role not found
+            }
 
-        $userSuperAdmin = User::factory()->create([
-            'name' => 'Super-Admin User',
-            'email' => 'superadmin@example.com',
-            'password' => bcrypt('password'),
-            'agency_id' => $agencyJDN->id,
-        ]);
-        $userSuperAdmin->assignRole($roleSuperAdmin);
+            // Create a user for each role
+            $user = User::firstOrCreate([
+                'email' => $email
+            ], [
+                'name' => ucfirst(explode('@', $email)[0]), // Generate user name
+                'password' => bcrypt('password'), // Default password
+                'personal_email' => 'personal_' . $email, // Set personal email
+                'agency_id' => $agencyJDN->id ?? null,
+                'org_id' => $orgDigital->id ?? null,
+            ]);
+
+            // Assign role to user
+            $user->assignRole($role);
+        }
     }
 }

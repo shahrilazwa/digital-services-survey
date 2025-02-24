@@ -1,20 +1,22 @@
 (function () {
     "use strict";
+    const getInputValue = (form, selector) => form.querySelector(selector)?.value || null;
 
     function onSubmit(pristine, form) {
         let valid = pristine.validate();
 
         if (valid) {
-            // Prepare form data for AJAX submission
             let formData = {
-                name: form.querySelector('input[name="permission-name"]').value,
+                name: getInputValue(form, 'input[name="perm-name"]'),
+                group: getInputValue(form, 'input[name="perm-group"]'),
+                description: getInputValue(form, 'textarea[name="perm-desc"]'),
             };
 
             axios.post('/permissions', formData)
             .then(function (response) {
                 if (response.status === 200 || response.status === 201) {
-                    console.log(response.message);
-                    window.location.href = '/permissions';
+                    console.log(response.data.message);
+                    window.location.href = `${window.routes.permissionsIndex}?success=Permission '${formData.name}' created successfully.`;
                 }
             })
             .catch(function (error) {
@@ -27,6 +29,7 @@
                 } else {
                     console.error('An error occurred:', error.response ? error.response.data : error.message);
                 }
+                window.location.href = `${window.routes.permissionsIndex}?error=Failed to create permission '${formData.name}'.`;
             });
         }
     }

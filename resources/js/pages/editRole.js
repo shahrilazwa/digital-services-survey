@@ -1,5 +1,6 @@
 (function () {
     "use strict";
+    const getInputValue = (form, selector) => form.querySelector(selector)?.value || null;
 
     function onSubmit(pristine, form) {
         let valid = pristine.validate();
@@ -7,15 +8,16 @@
         if (valid) {
             let roleId = form.querySelector('input[name="role-id"]').value;
             let formData = {
-                id: form.querySelector('input[name="role-id"]').value,
-                name: form.querySelector('input[name="role-name"]').value,
+                id: getInputValue(form, 'input[name="role-id"]'),
+                name: getInputValue(form, 'input[name="role-name"]'),
+                description: getInputValue(form, 'textarea[name="role-desc"]'),
             };
 
             axios.put(`/roles/${roleId}`, formData)
             .then(function (response) {
                 if (response.status === 200 || response.status === 201) {
                     console.log(response.data.message);
-                    window.location.href = '/roles';
+                    window.location.href = `${window.routes.rolesIndex}?success=Role '${formData.name}' updated successfully.`;
                 }
             })
             .catch(function (error) {
@@ -28,8 +30,8 @@
                 } else {
                     console.error('An error occurred:', error.response ? error.response.data : error.message);
                 }
+                window.location.href = `${window.routes.rolesIndex}?error=Failed to update role '${formData.name}'.`;
             });
-        
         }
     }
 

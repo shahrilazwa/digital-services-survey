@@ -5,6 +5,7 @@
 @endsection
 
 @section('subcontent')
+    {{-- @dump(session()->all()) --}}
     <h2 class="intro-y mt-10 text-lg font-medium">Permission List</h2>
     <div class="mt-5 grid grid-cols-12 gap-6">
         <div class="intro-y col-span-12 mt-2 flex flex-wrap items-center sm:flex-nowrap">
@@ -34,10 +35,13 @@
                 <x-base.table.thead>
                     <x-base.table.tr>
                         <x-base.table.th class="whitespace-nowrap border-b-0 text-left">
-                            ID
+                            
                         </x-base.table.th>
                         <x-base.table.th class="whitespace-nowrap border-b-0 text-left">
-                            PERMISSION NAME
+                            NAME
+                        </x-base.table.th>
+                        <x-base.table.th class="whitespace-nowrap border-b-0 text-left">
+                            GROUP
                         </x-base.table.th>
                         <x-base.table.th class="whitespace-nowrap border-b-0 text-center">
                             ACTIONS
@@ -48,10 +52,13 @@
                     @foreach ($permissions as $permission)
                         <x-base.table.tr class="intro-x">
                             <x-base.table.td class="box w-5 rounded-l-none rounded-r-none border-x-0 text-left shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600">
-                                {{ $permission->id }}
+                                {{ $loop->iteration + ($permissions->currentPage() - 1) * $permissions->perPage() }}
                             </x-base.table.td>
                             <x-base.table.td class="box w-56 rounded-l-none rounded-r-none border-x-0 text-left shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600">
                                 {{ $permission->name }}
+                            </x-base.table.td>
+                            <x-base.table.td class="box w-56 rounded-l-none rounded-r-none border-x-0 text-left shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600">
+                                {{ $permission->group ?? 'N/A' }}
                             </x-base.table.td>
                             <x-base.table.td @class([
                                 'box w-56 rounded-l-none rounded-r-none border-x-0 shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600',
@@ -65,7 +72,13 @@
                                         </a>
                                     @endcan
                                     @can('delete permissions')    
-                                        <a class="flex items-center text-danger" href="{{ url('permissions/'.$permission->id.'/delete') }}">
+                                        <a class="flex items-center text-danger"
+                                            href="#" 
+                                            data-tw-merge
+                                            data-id="{{ $permission->id }}"
+                                            data-name="{{ $permission->name }}"
+                                            id="delete-button"
+                                        >
                                             <x-base.lucide class="mr-1 h-4 w-4" icon="Trash" /> 
                                             Delete
                                         </a>
@@ -151,4 +164,105 @@
         </div>
         <!-- END: Pagination -->
     </div>
+
+    <!-- BEGIN: Delete Confirmation Content -->
+    <x-base.notification
+        class="flex"
+        id="delete-confirmation"
+    >
+        <x-base.lucide icon="HardDrive" />
+        <div class="ml-4 mr-4">
+            <div class="font-medium">Delete Permission</div>
+            <div class="mt-1 text-slate-500">
+                Are you sure you want to delete {{ $permission->name }} permission?
+            </div>
+            <div class="mt-1.5 flex font-medium">
+                <a
+                    class="text-primary dark:text-slate-400"
+                    href="{{ url('permissions/'.$permission->id.'/delete') }}"
+                >
+                    Confirm
+                </a>
+                <a
+                    class="ml-3 text-slate-500"
+                    href=""
+                >
+                    Cancel
+                </a>
+            </div>
+        </div>
+    </x-base.notification>
+    <!-- END: Delete Confirmation Content -->
+
+    @foreach (['success', 'error', 'info'] as $type)
+        @if (session($type))
+            <div id="{{ $type }}-message" data-message="{{ session($type) }}"></div>
+        @endif
+    @endforeach
+
+    <!-- BEGIN: Success Notification Content -->
+    <x-base.notification
+        class="flex"
+        id="success-notification-content"
+        data-message="{{ session('success') }}"
+    >
+        <x-base.lucide
+            class="text-success"
+            icon="CheckCircle"
+        />
+        <div class="ml-4 mr-4">
+            <div class="font-medium">Success!</div>
+            <div class="mt-1 text-slate-500">
+                {{ session('success') }}
+            </div>
+        </div>
+    </x-base.notification>
+    <!-- END: Success Notification Content -->
+
+    <!-- BEGIN: Info Notification Content -->
+    <x-base.notification
+        class="flex"
+        id="info-notification-content"
+        data-message="{{ session('info') }}"
+    >
+        <x-base.lucide
+            class="text-info"
+            icon="Info"
+        />
+        <div class="ml-4 mr-4">
+            <div class="font-medium">Info</div>
+            <div class="mt-1 text-slate-500">
+                {{ session('info') }}
+            </div>
+        </div>
+    </x-base.notification>    
+    <!-- END: Info Notification Content -->
+
+    <!-- BEGIN: Error Notification Content -->
+    <x-base.notification
+        class="flex"
+        id="error-notification-content"
+        data-message="{{ session('error') }}"
+    >
+        <x-base.lucide
+            class="text-danger"
+            icon="XCircle"
+        />
+        <div class="ml-4 mr-4">
+            <div class="font-medium">Failed!</div>
+            <div class="mt-1 text-slate-500">
+                {{ session('error') }}
+            </div>
+        </div>
+    </x-base.notification>
+    <!-- END: Error Notification Content -->      
 @endsection
+
+@pushOnce('vendors')
+    @vite('resources/js/vendors/axios.js')
+    @vite('resources/js/vendors/toastify.js')
+@endPushOnce
+
+@pushOnce('scripts')
+    @vite('resources/js/pages/listPermission.js')
+@endPushOnce
