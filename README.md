@@ -4,6 +4,7 @@
 The **Digital Services Survey System** is a **Government Digital Services Feedback Platform** that enables **public agencies** to **create**, **manage**, and **analyze** surveys related to **digital services** offered by the government. 
 
 It allows agencies to:
+
 ✔️ **Create & Manage Surveys** – Users can design reusable **survey schemas** to avoid redundant setup.  
 ✔️ **Publish Surveys with a Shareable Link** – A **unique URL** is generated for each published survey. This link can be **shared on external platforms**, websites, or applications.  
 ✔️ **Collect and Analyze Feedback** – Responses can be **structured (database)** or **unstructured (JSON)**.  
