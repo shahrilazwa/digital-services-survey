@@ -1,16 +1,17 @@
-# 📊 Digital Services Survey
+# 📊 **Digital Services Survey**
 
 ## **Overview**
-The **Digital Services Survey System** is a **Government Digital Services Feedback Platform** that enables **public agencies** to **create**, **manage**, and **analyze** surveys related to **digital services** offered by the government. 
+The **Digital Services Survey System** is a **Government Digital Services Feedback Platform** that enables **public agencies** to **create**, **manage**, and **analyze** surveys related to **digital services** offered by the government.
 
-It allows agencies to:
+This system allows agencies to:
 
-✔️ **Create & Manage Surveys** – Users can design reusable **survey schemas** to avoid redundant setup.  
-✔️ **Publish Surveys with a Shareable Link** – A **unique URL** is generated for each published survey. This link can be **shared on external platforms**, websites, or applications.  
-✔️ **Collect and Analyze Feedback** – Responses can be **structured (database)** or **unstructured (JSON)**.  
-✔️ **Export Survey Results** – Download responses in **CSV & Excel** for in-depth analysis.  
-✔️ **Government Service Mapping** – Links surveys to **specific agencies and digital services**.  
-✔️ **Access Control & Security** – Uses **Spatie Laravel Permission** for **RBAC** (Role-Based Access Control).  
+- ✔️ **Create & Manage Surveys** – Users can design reusable **survey schemas** to avoid redundant setup.  
+- ✔️ **Publish Surveys with a Shareable Link** – A **unique URL** is generated for each published survey. This link can be **shared on external platforms**, websites, or applications.  
+- ✔️ **Collect and Analyze Feedback** – Responses can be **structured (database)** or **unstructured (JSON)**.  
+- ✔️ **Export Survey Results** – Download responses in **CSV format** for in-depth analysis.  
+- ✔️ **Government Service Mapping** – Links surveys to **specific agencies and digital services**.  
+- ✔️ **Access Control & Security** – Uses **Spatie Laravel Permission** for **RBAC** (Role-Based Access Control).  
+- ✔️ **Form Validation** – Uses **Pristine.js** for **real-time input validation** on forms.
 
 This system is **designed to ensure data consistency**, **survey question reuse**, and **targeted feedback collection** to help improve digital services.
 
@@ -26,7 +27,7 @@ The **Digital Services Survey System** offers the following features:
 
 ### 🔹 **Survey Responses & Analytics**
 - **Capture Detailed Feedback** – Collect **structured & unstructured** data for analysis.  
-- **Export Survey Data** – Download responses in **CSV & Excel formats**.  
+- **Export Survey Data** – Download responses in **CSV format**.  
 - **View Survey Analytics** – Analyze trends and user feedback over time.  
 
 ### 🔹 **Security & Access Control**
@@ -37,6 +38,7 @@ The **Digital Services Survey System** offers the following features:
 - **Toast Notifications** – Provides **real-time alerts** (success, info, and errors).  
 - **Activity Logging** – Tracks changes and **displays notifications** for recent activities.  
 - **Modern UI Framework** – Built with **Vue.js**, **TailwindCSS**, and **SurveyJS**.  
+- **Real-Time Form Validation** – Uses **Pristine.js** for **frontend form validation**.
 
 ---
 
@@ -68,14 +70,16 @@ The **Digital Services Survey System** offers the following features:
 | **MySQL** | Database storage |
 | **Axios** | API communication between frontend & backend |
 | **Toastify.js** | Interactive toast notifications |
+| **Pristine.js** | Real-time form validation |
 | **Vite** | Frontend asset bundling & development |
 
-💡 **Reminder:** Axios is used in the project for **handling HTTP requests** between the frontend and backend. Ensure it is included in your Blade templates:
+💡 **Reminder:** Axios and Pristine.js are used in the project for **handling HTTP requests** and **form validation**, respectively. Ensure they are included in your Blade templates:
 
 ```blade
 @pushOnce('vendors')
     @vite('resources/js/vendors/axios.js')
     @vite('resources/js/vendors/toastify.js')
+    @vite('resources/js/vendors/pristine.js')
 @endPushOnce
 ```
 
@@ -145,11 +149,16 @@ npm run build
 🔹 **Collecting Survey Responses**  
 - Users can **access the survey via the published link**.  
 - Responses are **stored in the database** and **available for download**.  
-- Data can be **filtered and exported** in **CSV & Excel** format.  
+- Data can be **filtered and exported** in **CSV format**.  
 
 🔹 **Notifications & Activity Tracking**  
 - Users receive **real-time toast notifications** when actions are performed.  
 - Activity logs display **recent updates, changes, and errors**.  
+
+🔹 **Form Validation with Pristine.js**  
+- Forms are validated **before submission**.  
+- Input fields show **real-time validation errors** if values are missing or invalid.  
+- Ensures **data integrity** before reaching the backend.  
 
 ---
 
