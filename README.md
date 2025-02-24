@@ -11,7 +11,8 @@ This system allows agencies to:
 - ✔️ **Export Survey Results** – Download responses in **CSV format** for in-depth analysis.  
 - ✔️ **Government Service Mapping** – Links surveys to **specific agencies and digital services**.  
 - ✔️ **Access Control & Security** – Uses **Spatie Laravel Permission** for **RBAC** (Role-Based Access Control).  
-- ✔️ **Form Validation** – Uses **Pristine.js** for **real-time input validation** on forms.
+- ✔️ **Form Validation** – Uses **Pristine.js** for **real-time input validation**.  
+- ✔️ **Activity Logging (Audit Trails)** – Tracks **user actions & transactions** for security and transparency.  
 
 This system is **designed to ensure data consistency**, **survey question reuse**, and **targeted feedback collection** to help improve digital services.
 
@@ -33,6 +34,11 @@ The **Digital Services Survey System** offers the following features:
 ### 🔹 **Security & Access Control**
 - **User Roles & Permissions** – Uses **Spatie Laravel Permission** for **RBAC** (Role-Based Access Control).  
 - **Secure Authentication** – Uses **Laravel Fortify** to ensure **secure user login** and **session management**.  
+
+### 🔹 **Audit Trails & Activity Logs**
+- **Logs all user actions** – Tracks transactions like survey creation, editing, and user access.  
+- **Enhances security** – Maintains records for auditing and compliance.  
+- **Displays recent activities** – Users can view their **own history** in the system.  
 
 ### 🔹 **Dynamic UI & Notifications**
 - **Toast Notifications** – Provides **real-time alerts** (success, info, and errors).  
@@ -155,10 +161,16 @@ npm run build
 - Users receive **real-time toast notifications** when actions are performed.  
 - Activity logs display **recent updates, changes, and errors**.  
 
-🔹 **Form Validation with Pristine.js**  
-- Forms are validated **before submission**.  
-- Input fields show **real-time validation errors** if values are missing or invalid.  
-- Ensures **data integrity** before reaching the backend.  
+🔹 **Audit Logs (Activity Tracking)**  
+- The system records **all actions** performed by users.  
+- **Logged events include:**  
+  - **Survey creation & updates**  
+  - **User role changes**  
+  - **System configuration modifications**  
+  - **Survey response submissions**  
+- To view logs, go to **Activity Log** in the admin panel.
+
+📄 **More details can be found in `docs/audit-trails.md`**.
 
 ---
 
@@ -172,6 +184,7 @@ This project follows **strict coding and documentation standards**. Below are so
 | `docs/activity-notifications.md` | How to display **user activity notifications**. |
 | `docs/access-control.md` | **Role-based access control (RBAC)** using **Spatie Laravel Permission**. |
 | `docs/survey-management.md` | Guidelines for **creating, managing, and publishing surveys**. |
+| `docs/audit-trails.md` | **Logs all user transactions & system activity** for auditing purposes. |
 
 💡 **Reminder:** Always refer to these documents when making changes or enhancements.
 
