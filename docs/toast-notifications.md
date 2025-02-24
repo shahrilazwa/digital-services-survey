@@ -1,12 +1,13 @@
 # **Toast Notification Standards**
 
 ## **Overview**
-This document outlines the **standardized approach** to implementing **toast notifications** for success and error messages in the **Digital Services Survey** project. 
+This document outlines the **standardized approach** to implementing **toast notifications** for success, error, and info messages in the **Digital Services Survey** project.
 
 ### **Why Use Toast Notifications?**
-Toast notifications are **non-blocking alerts** that inform users of success or failure **without requiring additional interaction** (e.g., clicking "OK" on a pop-up). They provide **real-time feedback** after operations such as:
+Toast notifications are **non-blocking alerts** that inform users of success, failure, or no changes **without requiring additional interaction** (e.g., clicking "OK" on a pop-up). They provide **real-time feedback** after operations such as:
 - ✅ **Creating a new record**
-- ✅ **Updating an existing record**
+- ✅ **Updating an existing record (Only if changes are made)**
+- ✅ **Handling cases where no changes are detected**
 - ✅ **Deleting a record**
 
 ### **Objectives of This Standard**
@@ -20,7 +21,7 @@ By following this standard, we achieve:
 ---
 
 ## **1️⃣ Handling Notifications in Laravel Controllers**
-In Laravel, **flash session messages** are used to store success or error messages **only for the next request**. These messages should be retrieved and displayed when the user is redirected back to a page.
+In Laravel, **flash session messages** are used to store success, error, or info messages **only for the next request**. These messages should be retrieved and displayed when the user is redirected back to a page.
 
 ### **Converting Query Parameters to Session Messages**
 When performing a **redirect**, messages are passed as **query parameters** (e.g., `?success=Message`). Before rendering the view, these messages are converted into **session flash messages**.
@@ -43,7 +44,7 @@ public function index(Request $request)
     }
 
     // Convert query string messages into session flash messages
-    foreach (['success', 'error'] as $type) {
+    foreach (['success', 'error', 'info'] as $type) {
         if ($request->has($type)) {
             session()->flash($type, $request->get($type));
         }
@@ -56,8 +57,8 @@ public function index(Request $request)
 ```
 
 ### **Explanation**
-1. **Retrieves notifications from the query string** (`$request->has($type)`)
-2. **Stores them in session flash messages** (`session()->flash($type, $request->get($type))`)
+1. **Retrieves notifications from the query string** (`$request->has($type)`).
+2. **Stores them in session flash messages** (`session()->flash($type, $request->get($type))`).
 3. **These messages are available only for the next request**, ensuring they do not persist.
 
 ---
@@ -65,155 +66,145 @@ public function index(Request $request)
 ## **2️⃣ Storing Messages in Controller Actions**
 Each controller method must handle messages consistently.
 
-### **✅ Create (Store) Function**
+### **✅ Update (Edit) Function with Change Detection**
 ```php
-public function store(Request $request)
+public function update(Request $request, Permission $permission)
 {
     try {
         $request->validate([
-            'name' => ['required', 'string', 'min:6', 'unique:permissions,name'],
-            'group' => ['nullable', 'string', 'max:255'],
+            'name' => ['required', 'string', 'min:6', 'unique:permissions,name,' . $permission->id],
+            'group' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:500']
         ]);
 
         $userId = Auth::id() ?? 0;
 
-        $permission = Permission::create([
+        // Manually check for changes
+        $hasChanges = false;
+        if (
+            $permission->name !== $request->name ||
+            $permission->group !== $request->group ||
+            $permission->description !== $request->description
+        ) {
+            $hasChanges = true;
+        }
+
+        // If no changes detected, return an info response
+        if (!$hasChanges) {
+            return response()->json([
+                'success' => false,
+                'message' => "No changes detected. Permission '{$request->name}' was not updated.",
+                'details' => $request->name,
+                'id' => $request->id,                    
+            ], 200);
+        }
+
+        // Update only if changes exist
+        $permission->update([
             'name' => $request->name,
             'group' => $request->group,
             'description' => $request->description,
-            'created_by' => $userId,
+            'updated_by' => $userId,
         ]);
 
-        ActivityLogger::log('Created', 'Permission', $permission->id, [
-            'title' => 'Permission Created',
-            'description' => "{$permission->name} permission created by " . (Auth::user()->name ?? 'System'),
-        ]);
+        ActivityLogger::log('Permission Updated', 'Permission', $request->id, [
+            'title' => 'Permission Updated',
+            'description' => "{$request->name} permission updated by " . (Auth::user()->name ?? 'System'),
+        ]);        
 
-        return redirect()->route('permissions.index', [
-            'success' => "Permission '{$permission->name}' created successfully."
-        ]);
-
+        return response()->json([
+            'success' => true,
+            'message' => "Permission '{$request->name}' updated successfully.",
+            'details' => $request->name,
+            'id' => $request->id,
+        ], 201);
     } catch (Exception $e) {
-        Log::error('Permission creation failed:', [
+        Log::error('Permission update failed:', [
             'error' => $e->getMessage(),
             'trace' => $e->getTraceAsString(),
-            'data' => $request->all(),
+            'permission_id' => $permission->id
         ]);
 
-        return redirect()->route('permissions.index', [
-            'error' => "Failed to create permission '{$request->name}'."
-        ]);
-    }
+        return response()->json([
+            'success' => false,
+            'message' => "Failed to update permission '{$request->name}'.",
+            'error' => $e->getMessage(),
+        ], 500);
+    }            
 }
 ```
-### **Key Aspects**
-1. **Validation** - Ensures required fields are present before proceeding.
-2. **Error Handling** - If an exception occurs, it is logged (`Log::error()`) and an **error message is sent via redirect**.
-3. **Activity Logging** - Every successful creation is recorded using `ActivityLogger::log()`.
-4. **Redirects with Flash Message** - Redirects back to `permissions.index` with a `success` or `error` message.
 
 ---
 
 ## **3️⃣ Displaying Toast Notifications in Blade**
 📂 **File:** `resources/views/auth/admin/permissions/index.blade.php`
 ```blade
-@foreach (['success', 'error'] as $type)
-    @if (session($type))
-        <div id="{{ $type }}-message" data-message="{{ session($type) }}"></div>
-    @endif
-@endforeach
-```
-### **How This Works**
-- The **Blade template dynamically checks** for both success and error messages.
-- If found, it **creates a hidden `div` element** that is later read by JavaScript.
-
----
-
-## **4️⃣ Toast Notification in JavaScript**
-📂 **File:** `resources/js/pages/listPermission.js`
-```js
-(function () {
-    "use strict";
-
-    // Delete confirmation
-    $("#delete-button").on("click", function () {
-        Toastify({
-            node: $("#delete-confirmation")
-                .clone()
-                .removeClass("hidden")[0],
-            duration: -1,
-            newWindow: true,
-            close: false,
-            gravity: "top",
-            position: "right",
-            stopOnFocus: true,
-        }).showToast();
-    });
-
-    // Function to show Toast notifications and clear session values
-    function showToastAndClearSession(type, messageElementId, notificationElementId) {
-        let messageElement = $(`#${messageElementId}`);
-        if (messageElement.length > 0) {  
-            Toastify({
-                node: $(`#${notificationElementId}`)
-                    .clone()
-                    .removeClass("hidden")[0],
-                duration: 3000,
-                newWindow: true,
-                close: true,
-                gravity: "top",
-                position: "right",
-                stopOnFocus: true,
-                callback: function () {
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                }
-            }).showToast();
-
-            clearSessionMessage(messageElementId);
-        }
-    }
-
-    function clearSessionMessage(sessionKey) {
-        axios.post("/clear-session-message", { key: sessionKey })
-            .then(response => console.log(`Session key '${sessionKey}' cleared.`))
-            .catch(error => console.error(`Failed to clear session key '${sessionKey}':`, error));
-    }
-
-    // Show and clear success notification
-    showToastAndClearSession("success", "success-message", "success-notification-content");
-
-    // Show and clear error notification
-    showToastAndClearSession("error", "error-message", "error-notification-content");
-
-})();
+@pushOnce('vendors')
+    @vite('resources/js/vendors/axios.js')
+    @vite('resources/js/vendors/toastify.js')
+@endPushOnce
 ```
 
-### **How This Works**
-1. **Toastify.js is used to display notifications**.
-2. **Session messages are retrieved from Blade (`#success-message`, `#error-message`)**.
-3. **The notification disappears after 3 seconds (`duration: 3000`)**.
-4. **Session messages are cleared after the notification is displayed** using an **Axios POST request**.
+💡 **Reminder:** *Always include these in your Blade file to ensure Axios and Toastify are loaded properly!* 
 
----
+```blade
+<!-- BEGIN: Success Notification Content -->
+<x-base.notification
+    class="flex"
+    id="success-notification-content"
+    data-message="{{ session('success') }}"
+>
+    <x-base.lucide
+        class="text-success"
+        icon="CheckCircle"
+    />
+    <div class="ml-4 mr-4">
+        <div class="font-medium">Success!</div>
+        <div class="mt-1 text-slate-500">
+            {{ session('success') }}
+        </div>
+    </div>
+</x-base.notification>
+<!-- END: Success Notification Content -->
 
-## **5️⃣ Laravel Route for Clearing Session Messages**
-📂 **File:** `routes/web.php`
-```php
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
+<!-- BEGIN: Info Notification Content -->
+<x-base.notification
+    class="flex"
+    id="info-notification-content"
+    data-message="{{ session('info') }}"
+>
+    <x-base.lucide
+        class="text-info"
+        icon="Info"
+    />
+    <div class="ml-4 mr-4">
+        <div class="font-medium">Info</div>
+        <div class="mt-1 text-slate-500">
+            {{ session('info') }}
+        </div>
+    </div>
+</x-base.notification>    
+<!-- END: Info Notification Content -->
 
-Route::post('/clear-session-message', function (Request $request) {
-    $key = $request->input('key');
-    if ($key && Session::has($key)) {
-        Session::forget($key);
-    }
-    return response()->json(['success' => true]);
-});
+<!-- BEGIN: Error Notification Content -->
+<x-base.notification
+    class="flex"
+    id="error-notification-content"
+    data-message="{{ session('error') }}"
+>
+    <x-base.lucide
+        class="text-danger"
+        icon="XCircle"
+    />
+    <div class="ml-4 mr-4">
+        <div class="font-medium">Failed!</div>
+        <div class="mt-1 text-slate-500">
+            {{ session('error') }}
+        </div>
+    </div>
+</x-base.notification>
+<!-- END: Error Notification Content -->
 ```
-### **Purpose**
-- This route allows the frontend to **clear session messages via Axios**.
-- Once a toast notification is displayed, it sends a POST request to remove the session key.
 
 ---
 
@@ -224,5 +215,5 @@ Route::post('/clear-session-message', function (Request $request) {
 ✅ **Secure session handling** (clears messages after display)  
 ✅ **Separation of backend and frontend logic**  
 ✅ **Automatic session clearing via Axios**  
-
-For further inquiries, contact the **Survey Admin** or **Super Admin**. 🚀
+✅ **Correct detection of unchanged records and displaying of info toast notifications**  
+✅ **Ensuring required JS libraries (Axios, Toastify) are included in the Blade file**
